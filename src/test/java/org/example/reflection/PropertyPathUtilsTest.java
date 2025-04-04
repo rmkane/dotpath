@@ -43,10 +43,17 @@ class PropertyPathUtilsTest {
         String player = PropertyPathUtils.<String>get(state, "player");
         assertEquals("Player1", player);
 
-        // Test getting nested object
+        // Test getting nested object properties
         Point pos = PropertyPathUtils.<Point>get(state, "position");
         assertEquals(10, pos.getX());
         assertEquals(20, pos.getY());
+
+        // Test getting nested object's properties directly
+        Integer posX = PropertyPathUtils.<Integer>get(state, "position.x");
+        assertEquals(10, posX);
+
+        Integer posY = PropertyPathUtils.<Integer>get(state, "position.y");
+        assertEquals(20, posY);
 
         // Test getting from properties map
         Integer level = PropertyPathUtils.<Integer>get(state, "properties.level");
@@ -74,6 +81,13 @@ class PropertyPathUtilsTest {
         PropertyPathUtils.set(state, "position", newPos);
         assertEquals(30, state.getPosition().getX());
         assertEquals(40, state.getPosition().getY());
+
+        // Test setting nested object's properties directly
+        PropertyPathUtils.set(state, "position.x", 50);
+        assertEquals(50, state.getPosition().getX());
+
+        PropertyPathUtils.set(state, "position.y", 60);
+        assertEquals(60, state.getPosition().getY());
 
         // Test setting properties in map
         PropertyPathUtils.set(state, "properties.level", 10);
