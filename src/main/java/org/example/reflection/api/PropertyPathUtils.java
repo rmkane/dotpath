@@ -1,26 +1,26 @@
-package org.example.reflection;
+package org.example.reflection.api;
 
-import org.example.reflection.internal.MapOperations;
-import org.example.reflection.internal.PathTraversalResult;
-import org.example.reflection.internal.PathTraverser;
-import org.example.reflection.internal.PropertyOperations;
 import org.example.reflection.internal.TypeResolver;
 import org.example.reflection.internal.ValidationUtils;
+import org.example.reflection.internal.operations.MapOperations;
+import org.example.reflection.internal.operations.PropertyOperations;
+import org.example.reflection.internal.traversal.PathTraversalResult;
+import org.example.reflection.internal.traversal.PathTraverser;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * Main utility class for reflection operations. Provides high-level methods for getting and setting
  * values using dot-notation paths.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PropertyPathUtils {
     private static final PathTraverser pathTraverser = new PathTraverser();
     private static final PropertyOperations propertyOperations = new PropertyOperations();
     private static final TypeResolver typeResolver = new TypeResolver();
     private static final ValidationUtils validationUtils = new ValidationUtils();
     private static final MapOperations mapOperations = new MapOperations();
-
-    private PropertyPathUtils() {
-        // Prevent instantiation
-    }
 
     /**
      * Traverses a path in an object and returns the final object and property name.
@@ -40,7 +40,7 @@ public final class PropertyPathUtils {
             String part = parts[i];
             validationUtils.validatePathSegment(part);
 
-            current = pathTraverser.traversePathAndCreateIfNeeded(current, part);
+            current = pathTraverser.traversePathAndCreateIfNeeded(new PathTraversalResult(current, part));
         }
 
         String finalPart = parts[parts.length - 1];

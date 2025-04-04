@@ -1,6 +1,6 @@
 package org.example.reflection.internal;
 
-import org.example.reflection.ReflectionException;
+import org.example.reflection.api.ReflectionException;
 
 /** Handles input validation. */
 public class ValidationUtils {

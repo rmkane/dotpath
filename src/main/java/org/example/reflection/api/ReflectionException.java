@@ -1,4 +1,4 @@
-package org.example.reflection;
+package org.example.reflection.api;
 
 /** Custom exception for reflection-related errors. */
 public class ReflectionException extends Exception {

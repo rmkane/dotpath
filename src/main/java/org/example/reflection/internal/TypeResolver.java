@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.example.reflection.ReflectionException;
+import org.example.reflection.api.ReflectionException;
+import org.example.reflection.internal.operations.PropertyOperations;
 
 /** Handles type resolution and conversion. */
 public class TypeResolver {

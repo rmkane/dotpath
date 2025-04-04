@@ -1,11 +1,11 @@
-package org.example.reflection.internal;
+package org.example.reflection.internal.operations;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.example.reflection.ReflectionException;
+import org.example.reflection.api.ReflectionException;
 
 /** Handles operations specific to object properties. */
 public class PropertyOperations {

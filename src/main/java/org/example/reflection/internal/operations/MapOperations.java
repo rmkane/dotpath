@@ -1,8 +1,8 @@
-package org.example.reflection.internal;
+package org.example.reflection.internal.operations;
 
 import java.util.Map;
 
-import org.example.reflection.ReflectionException;
+import org.example.reflection.api.ReflectionException;
 
 /** Handles operations specific to Map objects. */
 public class MapOperations {
