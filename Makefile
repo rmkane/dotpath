@@ -1,7 +1,7 @@
 MVN := mvn
 DOCS_DIR := target/reports/apidocs
 
-.PHONY: all clean compile test verify deps update format checkstyle site help docs docs-jar open-docs setup-hooks
+.PHONY: all clean compile test verify deploy deps update format lint site help docs docs-jar open-docs setup-hooks
 
 .DEFAULT_GOAL := all
 
@@ -18,6 +18,9 @@ test: # Run tests
 
 verify: # Compile, run tests, and verify
 	$(MVN) verify
+
+deploy: # Deploy the package to the remote repository
+	$(MVN) deploy
 
 deps: # Show dependency tree
 	$(MVN) dependency:tree
