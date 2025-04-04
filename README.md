@@ -19,7 +19,7 @@ Add the following Maven dependency to your `pom.xml`:
 ```xml
 
 <dependency>
-    <groupId>com.github.rmkane</groupId>
+    <groupId>io.github.rmkane</groupId>
     <artifactId>dotpath</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
@@ -101,7 +101,7 @@ String value = DotPath.get(map, "nested.value"); // "test"
 ### Package Structure
 
 ```
-com.github.rmkane.dotpath
+io.github.rmkane.dotpath
 ├── api                          # Public API classes
 │   ├── DotPath.java               # API logic
 │   └── DotPathException.java      # Exception
