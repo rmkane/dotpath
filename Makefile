@@ -5,7 +5,7 @@ DOCS_DIR := target/reports/apidocs
 
 .DEFAULT_GOAL := all
 
-all: format verify docs  # Alias for verify
+all: lint verify docs  # Alias for verify
 
 clean: # Clean build artifacts
 	$(MVN) clean
@@ -28,8 +28,8 @@ update: # Check for dependency updates
 format: # Format code using Google Java Format via Spotless
 	$(MVN) spotless:apply
 
-checkstyle: # Check code style
-	$(MVN) checkstyle:check
+lint: # Check code style
+	$(MVN) spotless:check
 
 site: # Generate site documentation
 	$(MVN) site
@@ -54,4 +54,3 @@ help: # Show help message
 	@echo
 	@grep -E '^[a-zA-Z_-]+:.*?# .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?# "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
-	
