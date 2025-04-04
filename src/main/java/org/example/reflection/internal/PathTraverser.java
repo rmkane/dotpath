@@ -8,7 +8,7 @@ import org.example.reflection.ReflectionException;
 
 /** Handles path traversal operations. */
 public class PathTraverser {
-    private final PropertyAccessor propertyAccessor = new PropertyAccessor();
+    private final PropertyOperations propertyOperations = new PropertyOperations();
 
     /** Traverses a path in an object and returns the object at the specified path segment. */
     public Object traversePath(Object current, String part) throws ReflectionException {
@@ -22,7 +22,7 @@ public class PathTraverser {
         }
 
         try {
-            return propertyAccessor.getPropertyValue(current, part);
+            return propertyOperations.getPropertyValue(current, part);
         } catch (Exception e) {
             throw new ReflectionException("Error traversing path segment: " + part, e);
         }
@@ -43,12 +43,12 @@ public class PathTraverser {
         }
 
         try {
-            String getter = "get" + propertyAccessor.capitalize(part);
+            String getter = "get" + propertyOperations.capitalize(part);
             try {
                 Method method = current.getClass().getMethod(getter);
                 Object next = method.invoke(current);
                 if (next == null) {
-                    next = propertyAccessor.createAndSetIntermediateObject(current, part);
+                    next = propertyOperations.createAndSetIntermediateObject(current, part);
                 }
                 return next;
             } catch (NoSuchMethodException e) {
@@ -56,7 +56,7 @@ public class PathTraverser {
                 field.setAccessible(true);
                 Object next = field.get(current);
                 if (next == null) {
-                    next = propertyAccessor.createAndSetIntermediateObject(current, part);
+                    next = propertyOperations.createAndSetIntermediateObject(current, part);
                 }
                 return next;
             }

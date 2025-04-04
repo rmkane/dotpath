@@ -12,7 +12,7 @@ import org.example.reflection.ReflectionException;
 
 /** Handles type resolution and conversion. */
 public class TypeResolver {
-    private final PropertyAccessor propertyAccessor = new PropertyAccessor();
+    private final PropertyOperations propertyOperations = new PropertyOperations();
     private final ValidationUtils validationUtils = new ValidationUtils();
 
     /** Resolves the type of property at a given path. */
@@ -34,7 +34,7 @@ public class TypeResolver {
                 continue;
             }
 
-            current = propertyAccessor.getPropertyValue(current, part);
+            current = propertyOperations.getPropertyValue(current, part);
         }
 
         String last = parts[parts.length - 1];
@@ -56,7 +56,7 @@ public class TypeResolver {
 
     /** Resolves the type for a path segment. */
     public Class<?> resolveTypeForPathSegment(Class<?> currentClass, String part) throws Exception {
-        String getter = "get" + propertyAccessor.capitalize(part);
+        String getter = "get" + propertyOperations.capitalize(part);
         try {
             Method method = currentClass.getMethod(getter);
             return method.getReturnType();

@@ -1,9 +1,9 @@
 package org.example.reflection;
 
-import java.util.Map;
-
+import org.example.reflection.internal.MapOperations;
+import org.example.reflection.internal.PathTraversalResult;
 import org.example.reflection.internal.PathTraverser;
-import org.example.reflection.internal.PropertyAccessor;
+import org.example.reflection.internal.PropertyOperations;
 import org.example.reflection.internal.TypeResolver;
 import org.example.reflection.internal.ValidationUtils;
 
@@ -11,11 +11,16 @@ import org.example.reflection.internal.ValidationUtils;
  * Main utility class for reflection operations. Provides high-level methods for getting and setting
  * values using dot-notation paths.
  */
-public class PropertyPathUtils {
+public final class PropertyPathUtils {
     private static final PathTraverser pathTraverser = new PathTraverser();
-    private static final PropertyAccessor propertyAccessor = new PropertyAccessor();
+    private static final PropertyOperations propertyOperations = new PropertyOperations();
     private static final TypeResolver typeResolver = new TypeResolver();
     private static final ValidationUtils validationUtils = new ValidationUtils();
+    private static final MapOperations mapOperations = new MapOperations();
+
+    private PropertyPathUtils() {
+        // Prevent instantiation
+    }
 
     /**
      * Traverses a path in an object and returns the final object and property name.
@@ -25,7 +30,7 @@ public class PropertyPathUtils {
      * @return A pair containing the final object and the final property name
      * @throws ReflectionException if the path is invalid or inaccessible
      */
-    private static Object[] traversePath(Object root, String path) throws ReflectionException {
+    private static PathTraversalResult traversePath(Object root, String path) throws ReflectionException {
         validationUtils.validateInput(root, path);
 
         String[] parts = path.split("\\.");
@@ -41,7 +46,7 @@ public class PropertyPathUtils {
         String finalPart = parts[parts.length - 1];
         validationUtils.validatePathSegment(finalPart);
 
-        return new Object[] {current, finalPart};
+        return new PathTraversalResult(current, finalPart);
     }
 
     /**
@@ -54,17 +59,16 @@ public class PropertyPathUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(Object root, String path) throws ReflectionException {
-        Object[] result = traversePath(root, path);
-        Object current = result[0];
-        String finalPart = (String) result[1];
+        PathTraversalResult result = traversePath(root, path);
+        Object target = result.getTarget();
+        String propertyName = result.getPropertyName();
 
-        if (current instanceof Map<?, ?>) {
-            Map<String, Object> map = (Map<String, Object>) current;
-            return (T) map.get(finalPart);
+        if (mapOperations.isMap(target)) {
+            return mapOperations.getValue(mapOperations.asMap(target), propertyName);
         }
 
         try {
-            return (T) propertyAccessor.getPropertyValue(current, finalPart);
+            return (T) propertyOperations.getPropertyValue(target, propertyName);
         } catch (Exception e) {
             throw new ReflectionException("Error getting value at path: " + path, e);
         }
@@ -79,12 +83,16 @@ public class PropertyPathUtils {
      * @throws ReflectionException if the path is invalid or inaccessible
      */
     public static <T> void set(Object root, String path, T value) throws ReflectionException {
-        Object[] result = traversePath(root, path);
-        Object current = result[0];
-        String finalPart = (String) result[1];
+        PathTraversalResult result = traversePath(root, path);
+        Object target = result.getTarget();
+        String propertyName = result.getPropertyName();
 
         try {
-            propertyAccessor.setValueOnObject(current, finalPart, value);
+            if (mapOperations.isMap(target)) {
+                mapOperations.setValue(mapOperations.asMap(target), propertyName, value);
+            } else {
+                propertyOperations.setValueOnObject(target, propertyName, value);
+            }
         } catch (Exception e) {
             throw new ReflectionException("Error setting value at path: " + path, e);
         }

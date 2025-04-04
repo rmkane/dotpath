@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.example.reflection.ReflectionException;
 
-/** Handles property access operations. */
-public class PropertyAccessor {
+/** Handles operations specific to object properties. */
+public class PropertyOperations {
     /** Gets a value from an object using a property name. */
     public Object getValueFromObject(Object obj, String propertyName) throws Exception {
         return getPropertyValue(obj, propertyName);
