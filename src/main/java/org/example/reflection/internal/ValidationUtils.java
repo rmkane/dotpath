@@ -18,8 +18,10 @@ public class ValidationUtils {
         if (value == null) {
             throw new ReflectionException(paramName + " cannot be null");
         }
-        if (value instanceof String && ((String) value).trim().isEmpty()) {
-            throw new ReflectionException(paramName + " cannot be empty");
+        if (value instanceof String stringValue) {
+            if (stringValue.trim().isEmpty()) {
+                throw new ReflectionException(paramName + " cannot be empty");
+            }
         }
     }
 

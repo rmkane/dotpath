@@ -53,10 +53,9 @@ public class MapOperations {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> asMap(Object obj) throws ReflectionException {
-        if (obj instanceof Map<?, ?>) {
-            return (Map<String, Object>) obj;
-        } else {
+        if (!isMap(obj)) {
             throw new ReflectionException("Object is not a Map");
         }
+        return (Map<String, Object>) obj;
     }
 }

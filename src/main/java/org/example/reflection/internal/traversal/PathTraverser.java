@@ -59,11 +59,10 @@ public class PathTraverser {
 
         try {
             Object value = propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
-            if (value == null) {
-                return propertyOperations.createAndSetIntermediateObject(
-                        context.getTarget(), context.getPropertyName());
+            if (value != null) {
+                return value;
             }
-            return value;
+            return propertyOperations.createAndSetIntermediateObject(context.getTarget(), context.getPropertyName());
         } catch (Exception e) {
             throw new ReflectionException("Error traversing path segment: " + context.getPropertyName(), e);
         }
