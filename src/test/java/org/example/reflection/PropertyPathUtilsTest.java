@@ -136,6 +136,13 @@ class PropertyPathUtilsTest {
         assertEquals(10, target.getPosition().getX());
         assertEquals(20, target.getPosition().getY());
 
+        // Copy nested object's properties directly
+        PropertyPathUtils.copy(source, target, "position.x");
+        assertEquals(10, target.getPosition().getX());
+
+        PropertyPathUtils.copy(source, target, "position.y");
+        assertEquals(20, target.getPosition().getY());
+
         // Copy properties from map
         PropertyPathUtils.copy(source, target, "properties.level");
         assertEquals(5, target.getProperties().get("level"));
@@ -169,7 +176,10 @@ class PropertyPathUtilsTest {
 
     @Test
     void testSetFromString() throws Exception {
-        State state = State.builder().build();
+        // Initialize State with a Point object
+        State state = State.builder()
+                .position(Point.builder().build())
+                .build();
 
         // Test setting primitive types from strings
         PropertyPathUtils.setFromString(state, "count", "42");
@@ -181,6 +191,13 @@ class PropertyPathUtilsTest {
         // Test setting String
         PropertyPathUtils.setFromString(state, "player", "Player1");
         assertEquals("Player1", state.getPlayer());
+
+        // Test setting nested object's properties from strings
+        PropertyPathUtils.setFromString(state, "position.x", "10");
+        assertEquals(10, state.getPosition().getX());
+
+        PropertyPathUtils.setFromString(state, "position.y", "20");
+        assertEquals(20, state.getPosition().getY());
 
         // Test setting properties in map
         PropertyPathUtils.setFromString(state, "properties.level", "5");
@@ -234,5 +251,16 @@ class PropertyPathUtilsTest {
 
         PropertyPathUtils.set(map, "achievements", Arrays.asList("victory", "mvp"));
         assertEquals(Arrays.asList("victory", "mvp"), map.get("achievements"));
+
+        // Test nested map operations
+        Map<String, Object> nestedMap = new HashMap<>();
+        nestedMap.put("inner", "value");
+        map.put("nested", nestedMap);
+
+        String innerValue = PropertyPathUtils.<String>get(map, "nested.inner");
+        assertEquals("value", innerValue);
+
+        PropertyPathUtils.set(map, "nested.inner", "new value");
+        assertEquals("new value", ((Map<?, ?>) map.get("nested")).get("inner"));
     }
 }
