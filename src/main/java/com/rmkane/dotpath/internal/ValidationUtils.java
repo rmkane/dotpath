@@ -1,6 +1,6 @@
-package org.example.reflection.internal;
+package com.rmkane.dotpath.internal;
 
-import org.example.reflection.api.ReflectionException;
+import com.rmkane.dotpath.api.ReflectionException;
 
 /**
  * Utility class for validating input parameters and path segments.

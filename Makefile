@@ -1,7 +1,7 @@
 MVN := mvn
 DOCS_DIR := target/reports/apidocs
 
-.PHONY: all clean compile test verify run deps update format checkstyle site help docs docs-jar open-docs
+.PHONY: all clean compile test verify deps update format checkstyle site help docs docs-jar open-docs
 
 .DEFAULT_GOAL := all
 
@@ -18,9 +18,6 @@ test: # Run tests
 
 verify: # Compile, run tests, and verify
 	$(MVN) verify
-
-run: # Run the application
-	$(MVN) exec:java -Dexec.mainClass="org.example.reflection.api.PropertyPathUtils"
 
 deps: # Show dependency tree
 	$(MVN) dependency:tree

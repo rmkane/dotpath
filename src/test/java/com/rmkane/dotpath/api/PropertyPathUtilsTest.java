@@ -1,4 +1,4 @@
-package org.example.reflection.api;
+package com.rmkane.dotpath.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,9 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.example.reflection.model.Point;
-import org.example.reflection.model.State;
 import org.junit.jupiter.api.Test;
+
+import com.rmkane.dotpath.model.Point;
+import com.rmkane.dotpath.model.State;
 
 class PropertyPathUtilsTest {
     @Test
@@ -162,7 +163,7 @@ class PropertyPathUtilsTest {
                 exception
                         .getMessage()
                         .contains(
-                                "Source type org.example.reflection.model.State and target type java.lang.String are incompatible"));
+                                "Source type com.rmkane.dotpath.model.State and target type java.lang.String are incompatible"));
 
         // Try to copy from String to State
         exception = assertThrows(ReflectionException.class, () -> {
@@ -172,7 +173,7 @@ class PropertyPathUtilsTest {
                 exception
                         .getMessage()
                         .contains(
-                                "Source type java.lang.String and target type org.example.reflection.model.State are incompatible"));
+                                "Source type java.lang.String and target type com.rmkane.dotpath.model.State are incompatible"));
     }
 
     @Test

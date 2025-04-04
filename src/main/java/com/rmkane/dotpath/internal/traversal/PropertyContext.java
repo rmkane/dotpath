@@ -1,4 +1,4 @@
-package org.example.reflection.internal.traversal;
+package com.rmkane.dotpath.internal.traversal;
 
 import lombok.Value;
 

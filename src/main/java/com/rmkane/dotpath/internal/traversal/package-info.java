@@ -14,4 +14,4 @@
  *   <li>Creation of intermediate objects when needed</li>
  * </ul>
  */
-package org.example.reflection.internal.traversal;
+package com.rmkane.dotpath.internal.traversal;

@@ -1,11 +1,11 @@
-package org.example.reflection.api;
+package com.rmkane.dotpath.api;
 
-import org.example.reflection.internal.TypeResolver;
-import org.example.reflection.internal.ValidationUtils;
-import org.example.reflection.internal.operations.MapOperations;
-import org.example.reflection.internal.operations.PropertyOperations;
-import org.example.reflection.internal.traversal.PathTraverser;
-import org.example.reflection.internal.traversal.PropertyContext;
+import com.rmkane.dotpath.internal.TypeResolver;
+import com.rmkane.dotpath.internal.ValidationUtils;
+import com.rmkane.dotpath.internal.operations.MapOperations;
+import com.rmkane.dotpath.internal.operations.PropertyOperations;
+import com.rmkane.dotpath.internal.traversal.PathTraverser;
+import com.rmkane.dotpath.internal.traversal.PropertyContext;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

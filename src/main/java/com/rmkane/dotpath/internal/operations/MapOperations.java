@@ -1,8 +1,8 @@
-package org.example.reflection.internal.operations;
+package com.rmkane.dotpath.internal.operations;
 
 import java.util.Map;
 
-import org.example.reflection.api.ReflectionException;
+import com.rmkane.dotpath.api.ReflectionException;
 
 /** Handles operations specific to Map objects. */
 public class MapOperations {

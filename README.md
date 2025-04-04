@@ -1,134 +1,125 @@
-# Java Reflection Utils
+# DotPath
 
-A Java library that provides utility methods for working with Java reflection. It includes methods for getting and setting field values, invoking methods, and more.
+A Java library for accessing nested properties using dot notation (e.g., "user.address.street"). DotPath makes it easy to get, set, and copy deeply nested properties in Java objects and maps.
 
 ## Features
 
-- Get and set field values using dot-notation paths (e.g., "user.address.street")
-- Copy values between objects
-- Convert string values to appropriate types
-- Handle nested objects and maps
-- Support for primitive types, objects, and collections
-- Automatic type resolution and conversion
+- Access nested properties using dot notation (e.g., "user.address.street")
+- Get/set values with type safety
+- Support for nested objects and maps
+- Automatic creation of intermediate objects
+- String value conversion for primitive types
+- Property copying between objects
 
-## Getting Started
+## Installation
 
-### Prerequisites
-
-- Java 21 or higher
-- Maven 3.6 or higher
-
-### Installation
-
-Add the following Maven dependency to your `pom.xml` file:
+Add the following Maven dependency to your `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>org.example.reflection</groupId>
-    <artifactId>java-reflection-utils</artifactId>
-    <version>1.0.0</version>
+    <groupId>com.rmkane.dotpath</groupId>
+    <artifactId>dotpath</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
 </dependency>
 ```
 
-### Usage Examples
+## Requirements
+
+- Java 21 or higher
+- Maven 3.x
+
+## Usage
+
+### Basic Operations
 
 ```java
-// Create a sample object
+// Create a test object
+Point position = Point.builder().x(10).y(20).build();
 State state = State.builder()
-    .count(42)
-    .value(3.14)
-    .player("Player1")
-    .position(Point.builder().x(10).y(20).build())
-    .build();
+        .count(42)
+        .position(position)
+        .build();
 
-// Get a value using dot notation
-int count = ReflectionUtils.get(state, "count");
-Point position = ReflectionUtils.get(state, "position");
+// Get values using dot notation
+Integer count = PropertyPathUtils.get(state, "count");                // 42
+Integer x = PropertyPathUtils.get(state, "position.x");              // 10
 
-// Set a value
-ReflectionUtils.set(state, "count", 100);
-ReflectionUtils.set(state, "position.x", 30);
-
-// Copy values between objects
-State newState = new State();
-ReflectionUtils.copy(state, newState, "count");
-ReflectionUtils.copy(state, newState, "position");
-
-// Set values from strings
-ReflectionUtils.setFromString(state, "count", "50");
-ReflectionUtils.setFromString(state, "value", "2.718");
+// Set values using dot notation
+PropertyPathUtils.set(state, "count", 100);                         // state.count = 100
+PropertyPathUtils.set(state, "position.x", 30);                     // state.position.x = 30
 ```
 
-## Project Structure
+### String Conversion and Property Copying
 
+```java
+// Set values from strings (with automatic type conversion)
+PropertyPathUtils.setFromString(state, "count", "200");             // state.count = 200
+PropertyPathUtils.setFromString(state, "position.y", "40");         // state.position.y = 40
+
+// Copy properties between objects
+State target = State.builder().build();
+PropertyPathUtils.copy(source, target, "position.x");               // Copies x coordinate
 ```
-src/
-├── main/
-│   └── java/
-│       └── org/
-│           └── example/
-│               └── reflection/
-│                   └── ReflectionUtils.java
-└── test/
-    └── java/
-        └── org/
-            └── example/
-                └── reflection/
-                    ├── model/
-                    │   ├── Point.java
-                    │   └── State.java
-                    └── ReflectionUtilsTest.java
+
+### Map Support
+
+The library provides seamless support for working with Maps:
+
+```java
+Map<String, Object> map = new HashMap<>();
+map.put("level", 5);
+map.put("nested", new HashMap<>());
+
+// Get/set values in maps
+PropertyPathUtils.set(map, "level", 10);                           // map.level = 10
+PropertyPathUtils.set(map, "nested.value", "test");                // Creates nested structure
+
+Integer level = PropertyPathUtils.get(map, "level");               // 10
+String value = PropertyPathUtils.get(map, "nested.value");         // "test"
 ```
 
 ## Development
 
-### Building the Project
+### Package Structure
 
-```bash
-mvn clean install
+```
+com.rmkane.dotpath
+├── api                 # Public API classes
+│   ├── PropertyPathUtils.java      # Main entry point
+│   └── ReflectionException.java    # Custom exceptions
+└── internal           # Internal implementation
+    ├── operations/    # Property and map operations
+    └── traversal/     # Path traversal logic
 ```
 
-### Running Tests
+### Building and Testing
+
+Use Make commands for common development tasks:
 
 ```bash
-mvn test
+# Clean and build the project
+make clean compile
+
+# Run the test suite
+make test
+
+# Format the code
+make format
+
+# Generate API documentation
+make docs
+
+# View documentation in browser
+make open-docs
 ```
 
-## Contributing
+### Documentation
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+The generated documentation will be available at:
+```
+target/reports/apidocs/index.html
+```
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Documentation
-
-You can generate and view the documentation using Make:
-
-```bash
-# Generate Javadoc documentation
-make docs
-
-# Generate Javadoc JAR (for publishing)
-make docs-jar
-
-# Generate and open documentation in your default browser
-make open-docs
-```
-
-Alternatively, you can use Maven directly:
-
-```bash
-# Generate documentation
-mvn javadoc:javadoc
-
-# Generate Javadoc JAR
-mvn javadoc:jar
-```
-
-The generated documentation will be available in `target/reports/apidocs/`. Open `index.html` in your web browser to view it.

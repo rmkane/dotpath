@@ -13,4 +13,4 @@
  * <p><strong>Warning:</strong> Do not use these classes directly.
  * Instead, use the public API in the parent package.</p>
  */
-package org.example.reflection.internal;
+package com.rmkane.dotpath.internal;

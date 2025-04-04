@@ -1,4 +1,4 @@
-package org.example.reflection.internal;
+package com.rmkane.dotpath.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.example.reflection.api.ReflectionException;
-import org.example.reflection.internal.operations.PropertyOperations;
+import com.rmkane.dotpath.api.ReflectionException;
+import com.rmkane.dotpath.internal.operations.PropertyOperations;
 
 /** Handles type resolution and conversion. */
 public class TypeResolver {

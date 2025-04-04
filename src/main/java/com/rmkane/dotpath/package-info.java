@@ -3,7 +3,7 @@
  * using dot-notation paths. This library simplifies working with nested objects and properties
  * through reflection.
  *
- * <p>The main entry point is {@link org.example.reflection.api.PropertyPathUtils}, which provides
+ * <p>The main entry point is {@link com.rmkane.dotpath.api.PropertyPathUtils}, which provides
  * methods for getting and setting values using property paths.</p>
  *
  * <p>Example usage:</p>
@@ -13,6 +13,6 @@
  * String street = PropertyPathUtils.get(person, "address.street");
  * </pre>
  *
- * @see org.example.reflection.api.PropertyPathUtils
+ * @see com.rmkane.dotpath.api.PropertyPathUtils
  */
-package org.example.reflection;
+package com.rmkane.dotpath;

@@ -1,10 +1,10 @@
-package org.example.reflection.internal.traversal;
+package com.rmkane.dotpath.internal.traversal;
 
 import java.util.HashMap;
 
-import org.example.reflection.api.ReflectionException;
-import org.example.reflection.internal.operations.MapOperations;
-import org.example.reflection.internal.operations.PropertyOperations;
+import com.rmkane.dotpath.api.ReflectionException;
+import com.rmkane.dotpath.internal.operations.MapOperations;
+import com.rmkane.dotpath.internal.operations.PropertyOperations;
 
 /**
  * Handles path traversal operations with consistent behavior for maps and objects.

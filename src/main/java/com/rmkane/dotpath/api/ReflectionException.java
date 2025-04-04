@@ -1,4 +1,4 @@
-package org.example.reflection.api;
+package com.rmkane.dotpath.api;
 
 /**
  * Custom exception for reflection-related errors.

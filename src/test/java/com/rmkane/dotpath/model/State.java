@@ -1,4 +1,4 @@
-package org.example.reflection.model;
+package com.rmkane.dotpath.model;
 
 import java.util.HashMap;
 import java.util.Map;
