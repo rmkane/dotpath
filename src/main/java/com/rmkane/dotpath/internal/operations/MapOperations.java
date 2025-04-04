@@ -18,10 +18,7 @@ public class MapOperations {
      */
     @SuppressWarnings("unchecked")
     public <T> T getValue(Map<String, Object> map, String key) throws DotPathException {
-        if (!map.containsKey(key)) {
-            throw new DotPathException("Key not found in map: " + key);
-        }
-        return (T) map.get(key);
+        return getValueOrThrow(map, key, () -> new DotPathException("Key not found in map: " + key));
     }
 
     /**
@@ -36,9 +33,38 @@ public class MapOperations {
     @SuppressWarnings("unchecked")
     public <T> T getValueOrDefault(Object mapObj, String key, T defaultValue) throws DotPathException {
         Map<String, Object> map = asMap(mapObj);
+        return getValueOrDefault(map, key, defaultValue);
+    }
+
+    /**
+     * Gets a value from a map, returning a default value if not found.
+     *
+     * @param map The map to get the value from
+     * @param key The key to look up
+     * @param defaultValue The default value to return if key not found
+     * @return The value from the map or the default value
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getValueOrDefault(Map<String, Object> map, String key, T defaultValue) {
         Object value = map.get(key);
-        if (value == null) {
-            return defaultValue;
+        return value != null ? (T) value : defaultValue;
+    }
+
+    /**
+     * Gets a value from a map, throwing an exception if not found.
+     *
+     * @param map The map to get the value from
+     * @param key The key to look up
+     * @param exceptionSupplier Supplies the exception to throw if key not found
+     * @return The value from the map
+     * @throws E if the key is not found
+     */
+    @SuppressWarnings("unchecked")
+    private <T, E extends Exception> T getValueOrThrow(
+            Map<String, Object> map, String key, ExceptionSupplier<E> exceptionSupplier) throws E {
+        Object value = map.get(key);
+        if (value == null && !map.containsKey(key)) {
+            throw exceptionSupplier.get();
         }
         return (T) value;
     }
@@ -90,5 +116,10 @@ public class MapOperations {
             throw new DotPathException("Object is not a Map: " + obj.getClass().getName());
         }
         return (Map<String, Object>) obj;
+    }
+
+    @FunctionalInterface
+    private interface ExceptionSupplier<E extends Exception> {
+        E get();
     }
 }

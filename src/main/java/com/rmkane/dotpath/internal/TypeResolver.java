@@ -4,13 +4,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.rmkane.dotpath.api.DotPathException;
 import com.rmkane.dotpath.internal.operations.MapOperations;
 import com.rmkane.dotpath.internal.operations.PropertyOperations;
+import com.rmkane.dotpath.internal.parsers.CollectionParser;
+import com.rmkane.dotpath.internal.parsers.TimeParser;
 
 /**
  * Handles type resolution and conversion.
@@ -23,14 +23,26 @@ public class TypeResolver {
     private final ValidationUtils validationUtils = new ValidationUtils();
 
     static {
-        // Register basic type converters
+        // Register primitive and wrapper type converters
+        registerConverter(int.class, Integer::parseInt);
         registerConverter(Integer.class, Integer::parseInt);
+        registerConverter(long.class, Long::parseLong);
         registerConverter(Long.class, Long::parseLong);
+        registerConverter(double.class, Double::parseDouble);
         registerConverter(Double.class, Double::parseDouble);
+        registerConverter(float.class, Float::parseFloat);
         registerConverter(Float.class, Float::parseFloat);
+        registerConverter(boolean.class, Boolean::parseBoolean);
         registerConverter(Boolean.class, Boolean::parseBoolean);
-        registerConverter(LocalDate.class, str -> LocalDate.parse(str, DateTimeFormatter.ISO_DATE));
-        registerConverter(LocalDateTime.class, str -> LocalDateTime.parse(str, DateTimeFormatter.ISO_DATE_TIME));
+        registerConverter(String.class, String::valueOf);
+
+        // Register date/time converters
+        registerConverter(LocalDate.class, TimeParser::parseLocalDate);
+        registerConverter(LocalDateTime.class, TimeParser::parseLocalDateTime);
+
+        // Register collection converters
+        registerConverter(List.class, CollectionParser::parseList);
+        registerConverter(ArrayList.class, CollectionParser::parseList);
     }
 
     /**
@@ -92,7 +104,12 @@ public class TypeResolver {
             return null;
         }
 
-        // Try registered converters first
+        // For Object type, try to infer the most appropriate type
+        if (type == Object.class) {
+            return (T) inferObjectType(valueStr);
+        }
+
+        // Try registered converters
         TypeConverter<?> converter = TYPE_CONVERTERS.get(type);
         if (converter != null) {
             try {
@@ -102,45 +119,27 @@ public class TypeResolver {
             }
         }
 
-        // Fall back to existing conversion logic
+        throw new DotPathException("Unsupported type: " + type.getName());
+    }
+
+    /**
+     * Infers the most appropriate type for a string value when converting to Object.
+     */
+    private Object inferObjectType(String valueStr) throws DotPathException {
+        // Try numeric types first
         try {
-            if (type == int.class || type == Integer.class) {
-                return (T) Integer.valueOf(Integer.parseInt(valueStr));
-            }
-            if (type == long.class || type == Long.class) {
-                return (T) Long.valueOf(Long.parseLong(valueStr));
-            }
-            if (type == double.class || type == Double.class) {
-                return (T) Double.valueOf(Double.parseDouble(valueStr));
-            }
-            if (type == boolean.class || type == Boolean.class) {
-                return (T) Boolean.valueOf(Boolean.parseBoolean(valueStr));
-            }
-            if (type == String.class) {
-                return (T) valueStr;
-            }
-            if (type == List.class || type == ArrayList.class) {
-                return (T) Arrays.stream(valueStr.split(",")).map(String::trim).collect(Collectors.toList());
-            }
-            if (type == Object.class) {
-                // For Object type, try to determine the most appropriate type
-                try {
-                    return (T) Integer.valueOf(Integer.parseInt(valueStr));
-                } catch (NumberFormatException e) {
-                    try {
-                        return (T) Double.valueOf(Double.parseDouble(valueStr));
-                    } catch (NumberFormatException e2) {
-                        if (valueStr.equalsIgnoreCase("true") || valueStr.equalsIgnoreCase("false")) {
-                            return (T) Boolean.valueOf(Boolean.parseBoolean(valueStr));
-                        } else {
-                            return (T) valueStr;
-                        }
-                    }
+            return Integer.valueOf(valueStr);
+        } catch (NumberFormatException e) {
+            try {
+                return Double.valueOf(valueStr);
+            } catch (NumberFormatException e2) {
+                // Try boolean
+                if (valueStr.equalsIgnoreCase("true") || valueStr.equalsIgnoreCase("false")) {
+                    return Boolean.valueOf(valueStr);
                 }
+                // Default to string
+                return valueStr;
             }
-            throw new DotPathException("Unsupported type: " + type.getName());
-        } catch (Exception e) {
-            throw new DotPathException("Failed to convert value '" + valueStr + "' to type " + type.getName(), e);
         }
     }
 
