@@ -1,83 +1,71 @@
 package org.example.reflection.internal.traversal;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Map;
+import java.util.HashMap;
 
 import org.example.reflection.api.ReflectionException;
+import org.example.reflection.internal.operations.MapOperations;
 import org.example.reflection.internal.operations.PropertyOperations;
 
-/** Handles path traversal operations. */
+/**
+ * Handles path traversal operations with consistent behavior for maps and objects.
+ */
 public class PathTraverser {
     private final PropertyOperations propertyOperations = new PropertyOperations();
+    private final MapOperations mapOperations = new MapOperations();
 
-    /** Traverses a path in an object and returns the object at the specified path segment. */
-    public Object traversePath(PropertyContext result) throws ReflectionException {
-        if (result.getTarget() == null) {
-            throw new ReflectionException("Null while traversing: " + result.getPropertyName());
+    /**
+     * Traverses a path in an object and returns the object at the specified path segment.
+     * For maps, returns null if the key doesn't exist.
+     * For objects, attempts to get the property value.
+     *
+     * @param context The property context containing target object and property name
+     * @return The value at the specified path
+     * @throws ReflectionException if the path is invalid or inaccessible
+     */
+    public Object traversePath(PropertyContext context) throws ReflectionException {
+        if (context.getTarget() == null) {
+            throw new ReflectionException("Null while traversing: " + context.getPropertyName());
         }
 
-        Object next = handleMapOrNull(result);
-        if (next != null) {
-            return next;
+        if (mapOperations.isMap(context.getTarget())) {
+            return mapOperations.getValue(mapOperations.asMap(context.getTarget()), context.getPropertyName());
         }
 
         try {
-            return propertyOperations.getPropertyValue(result.getTarget(), result.getPropertyName());
+            return propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
         } catch (Exception e) {
-            throw new ReflectionException("Error traversing path segment: " + result.getPropertyName(), e);
+            throw new ReflectionException("Error traversing path segment: " + context.getPropertyName(), e);
         }
     }
 
     /**
-     * Traverses a path in an object and returns the object at the specified path segment, creating
-     * intermediate objects if needed.
+     * Traverses a path in an object and returns the object at the specified path segment,
+     * creating intermediate objects if needed.
+     *
+     * @param context The property context containing target object and property name
+     * @return The value at the specified path, creating new objects as needed
+     * @throws ReflectionException if the path is invalid or inaccessible
      */
-    public Object traversePathAndCreateIfNeeded(PropertyContext result) throws ReflectionException {
-        if (result.getTarget() == null) {
-            throw new ReflectionException("Null while traversing: " + result.getPropertyName());
+    public Object traversePathAndCreateIfNeeded(PropertyContext context) throws ReflectionException {
+        if (context.getTarget() == null) {
+            throw new ReflectionException("Null while traversing: " + context.getPropertyName());
         }
 
-        Object next = handleMapOrNull(result);
-        if (next != null) {
-            return next;
+        if (mapOperations.isMap(context.getTarget())) {
+            return mapOperations
+                    .asMap(context.getTarget())
+                    .computeIfAbsent(context.getPropertyName(), k -> new HashMap<>());
         }
 
         try {
-            String getter = "get" + propertyOperations.capitalize(result.getPropertyName());
-            try {
-                Method method = result.getTarget().getClass().getMethod(getter);
-                next = method.invoke(result.getTarget());
-                if (next == null) {
-                    next = propertyOperations.createAndSetIntermediateObject(
-                            result.getTarget(), result.getPropertyName());
-                }
-                return next;
-            } catch (NoSuchMethodException e) {
-                Field field = result.getTarget().getClass().getDeclaredField(result.getPropertyName());
-                field.setAccessible(true);
-                next = field.get(result.getTarget());
-                if (next == null) {
-                    next = propertyOperations.createAndSetIntermediateObject(
-                            result.getTarget(), result.getPropertyName());
-                }
-                return next;
+            Object value = propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
+            if (value == null) {
+                return propertyOperations.createAndSetIntermediateObject(
+                        context.getTarget(), context.getPropertyName());
             }
+            return value;
         } catch (Exception e) {
-            throw new ReflectionException("Error traversing path segment: " + result.getPropertyName(), e);
+            throw new ReflectionException("Error traversing path segment: " + context.getPropertyName(), e);
         }
-    }
-
-    /** Handles null checks and map operations for path traversal. */
-    private Object handleMapOrNull(PropertyContext result) throws ReflectionException {
-        if (result.getTarget() instanceof Map<?, ?> map) {
-            Object next = map.get(result.getPropertyName());
-            if (next == null) {
-                throw new ReflectionException("Map key missing at: " + result.getPropertyName());
-            }
-            return next;
-        }
-
-        return null;
     }
 }
