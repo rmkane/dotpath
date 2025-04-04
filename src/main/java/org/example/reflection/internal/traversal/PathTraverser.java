@@ -15,27 +15,19 @@ public class PathTraverser {
 
     /**
      * Traverses a path in an object and returns the object at the specified path segment.
-     * For maps, returns null if the key doesn't exist.
-     * For objects, attempts to get the property value.
      *
      * @param context The property context containing target object and property name
      * @return The value at the specified path
      * @throws ReflectionException if the path is invalid or inaccessible
      */
     public Object traversePath(PropertyContext context) throws ReflectionException {
-        if (context.getTarget() == null) {
-            throw new ReflectionException("Null while traversing: " + context.getPropertyName());
-        }
+        validateContext(context);
 
         if (mapOperations.isMap(context.getTarget())) {
             return mapOperations.getValue(mapOperations.asMap(context.getTarget()), context.getPropertyName());
         }
 
-        try {
-            return propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
-        } catch (Exception e) {
-            throw new ReflectionException("Error traversing path segment: " + context.getPropertyName(), e);
-        }
+        return getPropertyValue(context);
     }
 
     /**
@@ -47,9 +39,7 @@ public class PathTraverser {
      * @throws ReflectionException if the path is invalid or inaccessible
      */
     public Object traversePathAndCreateIfNeeded(PropertyContext context) throws ReflectionException {
-        if (context.getTarget() == null) {
-            throw new ReflectionException("Null while traversing: " + context.getPropertyName());
-        }
+        validateContext(context);
 
         if (mapOperations.isMap(context.getTarget())) {
             return mapOperations
@@ -57,6 +47,24 @@ public class PathTraverser {
                     .computeIfAbsent(context.getPropertyName(), k -> new HashMap<>());
         }
 
+        return getOrCreatePropertyValue(context);
+    }
+
+    private void validateContext(PropertyContext context) throws ReflectionException {
+        if (context.getTarget() == null) {
+            throw new ReflectionException("Null while traversing: " + context.getPropertyName());
+        }
+    }
+
+    private Object getPropertyValue(PropertyContext context) throws ReflectionException {
+        try {
+            return propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
+        } catch (Exception e) {
+            throw new ReflectionException("Error traversing path segment: " + context.getPropertyName(), e);
+        }
+    }
+
+    private Object getOrCreatePropertyValue(PropertyContext context) throws ReflectionException {
         try {
             Object value = propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
             if (value != null) {
