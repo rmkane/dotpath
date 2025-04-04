@@ -1,6 +1,7 @@
 package org.example.reflection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -177,9 +178,7 @@ class PropertyPathUtilsTest {
     @Test
     void testSetFromString() throws Exception {
         // Initialize State with a Point object
-        State state = State.builder()
-                .position(Point.builder().build())
-                .build();
+        State state = State.builder().position(Point.builder().build()).build();
 
         // Test setting primitive types from strings
         PropertyPathUtils.setFromString(state, "count", "42");
@@ -262,5 +261,28 @@ class PropertyPathUtilsTest {
 
         PropertyPathUtils.set(map, "nested.inner", "new value");
         assertEquals("new value", ((Map<?, ?>) map.get("nested")).get("inner"));
+    }
+
+    @Test
+    void testNullIntermediateObjects() throws Exception {
+        // Create a State with null position
+        State state = State.builder().build();
+
+        // Setting position.x should automatically create the Point object
+        PropertyPathUtils.set(state, "position.x", 10);
+        assertNotNull(state.getPosition());
+        assertEquals(10, state.getPosition().getX());
+
+        // Setting position.y should use the existing Point object
+        PropertyPathUtils.set(state, "position.y", 20);
+        assertEquals(20, state.getPosition().getY());
+
+        // Getting position.x should work with the created Point
+        Integer x = PropertyPathUtils.get(state, "position.x");
+        assertEquals(10, x);
+
+        // Setting from string should also work
+        PropertyPathUtils.setFromString(state, "position.x", "30");
+        assertEquals(30, state.getPosition().getX());
     }
 }

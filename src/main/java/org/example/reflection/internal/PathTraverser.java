@@ -12,6 +12,10 @@ public class PathTraverser {
 
     /** Traverses a path in an object and returns the object at the specified path segment. */
     public Object traversePath(Object current, String part) throws ReflectionException {
+        if (current == null) {
+            throw new ReflectionException("Null while traversing: " + part);
+        }
+
         Object result = handleMapOrNull(current, part);
         if (result != null) {
             return result;
@@ -29,6 +33,10 @@ public class PathTraverser {
      * intermediate objects if needed.
      */
     public Object traversePathAndCreateIfNeeded(Object current, String part) throws ReflectionException {
+        if (current == null) {
+            throw new ReflectionException("Null while traversing: " + part);
+        }
+
         Object result = handleMapOrNull(current, part);
         if (result != null) {
             return result;
@@ -59,10 +67,6 @@ public class PathTraverser {
 
     /** Handles null checks and map operations for path traversal. */
     private Object handleMapOrNull(Object current, String part) throws ReflectionException {
-        if (current == null) {
-            throw new ReflectionException("Null while traversing: " + part);
-        }
-
         if (current instanceof Map<?, ?> map) {
             Object next = map.get(part);
             if (next == null) {

@@ -36,7 +36,7 @@ public class PropertyPathUtils {
             String part = parts[i];
             validationUtils.validatePathSegment(part);
 
-            current = pathTraverser.traversePath(current, part);
+            current = pathTraverser.traversePathAndCreateIfNeeded(current, part);
         }
 
         String finalPart = parts[parts.length - 1];
