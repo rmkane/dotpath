@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "Running spotless:check to verify code formatting..."
+mvn spotless:check
+
+# Store the exit code
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+    echo "❌ Code formatting check failed. Please run 'make format' to fix formatting issues."
+    exit 1
+fi
+
+echo "✅ Code formatting check passed."
+exit 0 

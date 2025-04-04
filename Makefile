@@ -1,11 +1,11 @@
 MVN := mvn
 DOCS_DIR := target/reports/apidocs
 
-.PHONY: all clean compile test verify deps update format checkstyle site help docs docs-jar open-docs
+.PHONY: all clean compile test verify deps update format checkstyle site help docs docs-jar open-docs setup-hooks
 
 .DEFAULT_GOAL := all
 
-all: lint verify docs  # Alias for verify
+all: setup-hooks lint verify docs  # Alias for verify
 
 clean: # Clean build artifacts
 	$(MVN) clean
@@ -48,6 +48,13 @@ ifeq ($(shell uname), Darwin)
 else
 	xdg-open $(DOCS_DIR)/index.html 2>/dev/null || echo "Could not open browser automatically. Please open $(DOCS_DIR)/index.html manually."
 endif
+
+setup-hooks: # Install git hooks
+	@echo "Installing git hooks..."
+	@rm -f .git/hooks/pre-commit
+	@ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
+	@chmod +x .githooks/pre-commit
+	@echo "Git hooks installed successfully!"
 
 help: # Show help message
 	@echo "Available targets:"

@@ -106,12 +106,19 @@ make test
 # Format the code
 make format
 
+# Set up git hooks (automatically run by 'make all')
+make setup-hooks
+
 # Generate API documentation
 make docs
 
 # View documentation in browser
 make open-docs
 ```
+
+The project uses git hooks to ensure code quality:
+- Pre-commit hook: Runs `spotless:check` to verify code formatting before each commit
+- Hooks are automatically installed when running `make all` or `make setup-hooks`
 
 ### Documentation
 
