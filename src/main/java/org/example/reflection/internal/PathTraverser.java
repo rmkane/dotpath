@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public class PathTraverser {
     private final PropertyAccessor propertyAccessor = new PropertyAccessor();
-    private final ValidationUtils validationUtils = new ValidationUtils();
 
     /**
      * Traverses a path in an object and returns the object at the specified path segment.
@@ -77,7 +76,7 @@ public class PathTraverser {
             }
             return next;
         }
-        
+
         return null;
     }
 } 

@@ -25,7 +25,7 @@ public class TypeResolver {
         for (int i = 0; i < parts.length - 1; i++) {
             String part = parts[i];
             validationUtils.validatePathSegment(part);
-            
+
             if (Map.class.isAssignableFrom(currentClass)) {
                 currentClass = Object.class; // assume Object value inside map
                 continue;
@@ -36,7 +36,7 @@ public class TypeResolver {
 
         String last = parts[parts.length - 1];
         validationUtils.validatePathSegment(last);
-        
+
         if (Map.class.isAssignableFrom(currentClass)) {
             return Object.class;
         }
@@ -81,8 +81,8 @@ public class TypeResolver {
         }
         if (type == List.class || type == ArrayList.class) {
             return (T) Arrays.stream(valueStr.split(","))
-                         .map(String::trim)
-                         .collect(Collectors.toList());
+                    .map(String::trim)
+                    .collect(Collectors.toList());
         }
         if (type == Object.class) {
             // For Object type, try to determine the most appropriate type

@@ -9,8 +9,6 @@ import java.util.Map;
  * Handles property access operations.
  */
 public class PropertyAccessor {
-    private final ValidationUtils validationUtils = new ValidationUtils();
-
     /**
      * Gets a value from an object using a property name.
      */
@@ -47,8 +45,8 @@ public class PropertyAccessor {
         String setter = "set" + capitalize(propertyName);
         for (Method m : obj.getClass().getMethods()) {
             if (m.getName().equals(setter)
-                && m.getParameterCount() == 1
-                && m.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
+                    && m.getParameterCount() == 1
+                    && m.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
                 m.invoke(obj, value);
                 return;
             }
