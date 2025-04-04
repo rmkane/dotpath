@@ -18,15 +18,14 @@ public class PropertyPathUtils {
     private static final ValidationUtils validationUtils = new ValidationUtils();
 
     /**
-     * Gets a value from an object using a dot-notation path.
+     * Traverses a path in an object and returns the final object and property name.
      *
      * @param root The root object to traverse
-     * @param path The dot-notation path to the desired property
-     * @return The value at the specified path
+     * @param path The dot-notation path to traverse
+     * @return A pair containing the final object and the final property name
      * @throws ReflectionException if the path is invalid or inaccessible
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T get(Object root, String path) throws ReflectionException {
+    private static Object[] traversePath(Object root, String path) throws ReflectionException {
         validationUtils.validateInput(root, path);
 
         String[] parts = path.split("\\.");
@@ -42,8 +41,24 @@ public class PropertyPathUtils {
         String finalPart = parts[parts.length - 1];
         validationUtils.validatePathSegment(finalPart);
 
+        return new Object[] {current, finalPart};
+    }
+
+    /**
+     * Gets a value from an object using a dot-notation path.
+     *
+     * @param root The root object to traverse
+     * @param path The dot-notation path to the desired property
+     * @return The value at the specified path
+     * @throws ReflectionException if the path is invalid or inaccessible
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T get(Object root, String path) throws ReflectionException {
+        Object[] result = traversePath(root, path);
+        Object current = result[0];
+        String finalPart = (String) result[1];
+
         if (current instanceof Map<?, ?>) {
-            @SuppressWarnings("unchecked")
             Map<String, Object> map = (Map<String, Object>) current;
             return (T) map.get(finalPart);
         }
@@ -58,26 +73,15 @@ public class PropertyPathUtils {
     /**
      * Sets a value in an object using a dot-notation path.
      *
-     * @param root The root object to traverse
-     * @param path The dot-notation path to the desired property
+     * @param root  The root object to traverse
+     * @param path  The dot-notation path to the desired property
      * @param value The value to set
      * @throws ReflectionException if the path is invalid or inaccessible
      */
     public static <T> void set(Object root, String path, T value) throws ReflectionException {
-        validationUtils.validateInput(root, path);
-
-        String[] parts = path.split("\\.");
-        Object current = root;
-
-        for (int i = 0; i < parts.length - 1; i++) {
-            String part = parts[i];
-            validationUtils.validatePathSegment(part);
-
-            current = pathTraverser.traversePathAndCreateIfNeeded(current, part);
-        }
-
-        String finalPart = parts[parts.length - 1];
-        validationUtils.validatePathSegment(finalPart);
+        Object[] result = traversePath(root, path);
+        Object current = result[0];
+        String finalPart = (String) result[1];
 
         try {
             propertyAccessor.setValueOnObject(current, finalPart, value);
@@ -91,7 +95,7 @@ public class PropertyPathUtils {
      *
      * @param source Source object to copy from
      * @param target Target object to copy to
-     * @param path Property path to copy
+     * @param path   Property path to copy
      * @throws ReflectionException if types are incompatible or property not found
      */
     public static void copy(Object source, Object target, String path) throws ReflectionException {
@@ -126,8 +130,8 @@ public class PropertyPathUtils {
      * Sets a value in an object using a dot-notation path, converting the string value to the
      * appropriate type.
      *
-     * @param root The root object to traverse
-     * @param path The dot-notation path to the desired property
+     * @param root     The root object to traverse
+     * @param path     The dot-notation path to the desired property
      * @param valueStr The string value to convert and set
      * @throws ReflectionException if the path is invalid or inaccessible
      */

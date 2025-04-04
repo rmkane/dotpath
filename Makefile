@@ -2,9 +2,9 @@ MVN := mvn
 
 .PHONY: all clean compile test verify run deps update format checkstyle site help
 
-.DEFAULT_GOAL := verify
+.DEFAULT_GOAL := all
 
-all: verify # Alias for verify
+all: format verify # Alias for verify
 
 clean: # Clean build artifacts
 	$(MVN) clean
