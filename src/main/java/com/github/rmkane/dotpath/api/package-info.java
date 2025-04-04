@@ -1,7 +1,7 @@
 /**
  * Public API for the DotPath library, providing dot-notation access to object properties.
  *
- * <p>The main entry point is {@link com.rmkane.dotpath.api.DotPath}, which provides
+ * <p>The main entry point is {@link com.github.rmkane.dotpath.api.DotPath}, which provides
  * static methods for getting and setting values using dot-notation paths:
  *
  * <h2>Basic Usage</h2>
@@ -42,10 +42,10 @@
  * }
  * </pre>
  *
- * <p>All operations that can fail will throw {@link com.rmkane.dotpath.api.DotPathException}
+ * <p>All operations that can fail will throw {@link com.github.rmkane.dotpath.api.DotPathException}
  * with a descriptive message about what went wrong.
  *
- * @see com.rmkane.dotpath.api.DotPath
- * @see com.rmkane.dotpath.api.DotPathException
+ * @see com.github.rmkane.dotpath.api.DotPath
+ * @see com.github.rmkane.dotpath.api.DotPathException
  */
-package com.rmkane.dotpath.api;
+package com.github.rmkane.dotpath.api;

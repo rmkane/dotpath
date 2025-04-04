@@ -1,4 +1,4 @@
-package com.rmkane.dotpath.internal.parsers;
+package com.github.rmkane.dotpath.internal.parsers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

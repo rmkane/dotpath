@@ -1,16 +1,19 @@
-package com.rmkane.dotpath.internal;
+package com.github.rmkane.dotpath.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.rmkane.dotpath.api.DotPathException;
-import com.rmkane.dotpath.internal.operations.MapOperations;
-import com.rmkane.dotpath.internal.operations.PropertyOperations;
-import com.rmkane.dotpath.internal.parsers.CollectionParser;
-import com.rmkane.dotpath.internal.parsers.TimeParser;
+import com.github.rmkane.dotpath.api.DotPathException;
+import com.github.rmkane.dotpath.internal.operations.MapOperations;
+import com.github.rmkane.dotpath.internal.operations.PropertyOperations;
+import com.github.rmkane.dotpath.internal.parsers.CollectionParser;
+import com.github.rmkane.dotpath.internal.parsers.TimeParser;
 
 /**
  * Handles type resolution and conversion.

@@ -3,8 +3,8 @@
  *
  * <p>This package contains utility classes for parsing strings into different data types:
  * <ul>
- *   <li>{@link com.rmkane.dotpath.internal.parsers.TimeParser} - Parses date and time strings using ISO formats
- *   <li>{@link com.rmkane.dotpath.internal.parsers.CollectionParser} - Parses strings into collections
+ *   <li>{@link com.github.rmkane.dotpath.internal.parsers.TimeParser} - Parses date and time strings using ISO formats
+ *   <li>{@link com.github.rmkane.dotpath.internal.parsers.CollectionParser} - Parses strings into collections
  * </ul>
  *
  * <p>These parsers are used internally by the type conversion system to support
@@ -22,6 +22,6 @@
  * <p><strong>Note:</strong> This is an internal API and should not be used directly by client code.
  * The API may change without notice.
  *
- * @see com.rmkane.dotpath.internal.TypeResolver
+ * @see com.github.rmkane.dotpath.internal.TypeResolver
  */
-package com.rmkane.dotpath.internal.parsers;
+package com.github.rmkane.dotpath.internal.parsers;

@@ -1,9 +1,6 @@
-package com.rmkane.dotpath.api;
+package com.github.rmkane.dotpath.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,8 +9,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.rmkane.dotpath.model.Point;
-import com.rmkane.dotpath.model.State;
+import com.github.rmkane.dotpath.model.Point;
+import com.github.rmkane.dotpath.model.State;
 
 class DotPathTest {
     @Test
@@ -163,7 +160,7 @@ class DotPathTest {
                 exception
                         .getMessage()
                         .contains(
-                                "Source type com.rmkane.dotpath.model.State and target type java.lang.String are incompatible"));
+                                "Source type com.github.rmkane.dotpath.model.State and target type java.lang.String are incompatible"));
 
         // Try to copy from String to State
         exception = assertThrows(DotPathException.class, () -> {
@@ -173,7 +170,7 @@ class DotPathTest {
                 exception
                         .getMessage()
                         .contains(
-                                "Source type java.lang.String and target type com.rmkane.dotpath.model.State are incompatible"));
+                                "Source type java.lang.String and target type com.github.rmkane.dotpath.model.State are incompatible"));
     }
 
     @Test

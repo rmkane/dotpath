@@ -1,4 +1,4 @@
-package com.rmkane.dotpath.internal.traversal;
+package com.github.rmkane.dotpath.internal.traversal;
 
 import lombok.Value;
 
@@ -9,9 +9,13 @@ import lombok.Value;
  */
 @Value
 public class PropertyContext {
-    /** The target object containing the property */
+    /**
+     * The target object containing the property
+     */
     private final Object target;
 
-    /** The name of the property to access */
+    /**
+     * The name of the property to access
+     */
     private final String propertyName;
 }

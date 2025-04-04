@@ -1,8 +1,8 @@
-package com.rmkane.dotpath.internal.operations;
+package com.github.rmkane.dotpath.internal.operations;
 
 import java.util.Map;
 
-import com.rmkane.dotpath.api.DotPathException;
+import com.github.rmkane.dotpath.api.DotPathException;
 
 /**
  * Utility class for Map operations.
@@ -23,8 +23,8 @@ public class MapOperations {
     /**
      * Gets a value from a map, returning a default value if not found.
      *
-     * @param mapObj The map object
-     * @param key The key to look up
+     * @param mapObj       The map object
+     * @param key          The key to look up
      * @param defaultValue The default value to return if key not found
      * @return The value from the map or the default value
      * @throws DotPathException if the object is not a Map
@@ -37,8 +37,8 @@ public class MapOperations {
     /**
      * Gets a value from a map, returning a default value if not found.
      *
-     * @param map The map to get the value from
-     * @param key The key to look up
+     * @param map          The map to get the value from
+     * @param key          The key to look up
      * @param defaultValue The default value to return if key not found
      * @return The value from the map or the default value
      */
@@ -51,8 +51,8 @@ public class MapOperations {
     /**
      * Gets a value from a map, throwing an exception if not found.
      *
-     * @param map The map to get the value from
-     * @param key The key to look up
+     * @param map               The map to get the value from
+     * @param key               The key to look up
      * @param exceptionSupplier Supplies the exception to throw if key not found
      * @return The value from the map
      * @throws E if the key is not found
@@ -71,7 +71,7 @@ public class MapOperations {
      * Gets the type of a value in a map, returning Object.class if not found.
      *
      * @param mapObj The map object
-     * @param key The key to look up
+     * @param key    The key to look up
      * @return The class of the value or Object.class if not found
      * @throws DotPathException if the object is not a Map
      */

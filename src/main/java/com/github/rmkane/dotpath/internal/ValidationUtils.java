@@ -1,6 +1,6 @@
-package com.rmkane.dotpath.internal;
+package com.github.rmkane.dotpath.internal;
 
-import com.rmkane.dotpath.api.DotPathException;
+import com.github.rmkane.dotpath.api.DotPathException;
 
 /**
  * Utility class for validating input parameters and path segments.
@@ -10,7 +10,7 @@ public class ValidationUtils {
     /**
      * Validates that the input value is not null or empty.
      *
-     * @param value The value to validate
+     * @param value     The value to validate
      * @param paramName The name of the parameter being validated (used in error messages)
      * @throws DotPathException if the value is null or, if it's a String, if it's empty
      */

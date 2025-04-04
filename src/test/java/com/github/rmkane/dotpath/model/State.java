@@ -1,4 +1,4 @@
-package com.rmkane.dotpath.model;
+package com.github.rmkane.dotpath.model;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.rmkane.dotpath.model;
+package com.github.rmkane.dotpath.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

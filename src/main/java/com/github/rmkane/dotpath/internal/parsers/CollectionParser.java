@@ -1,4 +1,4 @@
-package com.rmkane.dotpath.internal.parsers;
+package com.github.rmkane.dotpath.internal.parsers;
 
 import java.util.Arrays;
 import java.util.List;

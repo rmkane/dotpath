@@ -1,4 +1,4 @@
-package com.rmkane.dotpath.api;
+package com.github.rmkane.dotpath.api;
 
 import java.io.Serial;
 

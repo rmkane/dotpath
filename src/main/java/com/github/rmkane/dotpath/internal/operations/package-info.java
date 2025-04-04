@@ -10,4 +10,4 @@
  * <p>These operations are used internally by the reflection utility to support
  * different types of property access patterns.</p>
  */
-package com.rmkane.dotpath.internal.operations;
+package com.github.rmkane.dotpath.internal.operations;

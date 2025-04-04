@@ -1,10 +1,10 @@
-package com.rmkane.dotpath.internal.traversal;
+package com.github.rmkane.dotpath.internal.traversal;
 
 import java.util.HashMap;
 
-import com.rmkane.dotpath.api.DotPathException;
-import com.rmkane.dotpath.internal.operations.MapOperations;
-import com.rmkane.dotpath.internal.operations.PropertyOperations;
+import com.github.rmkane.dotpath.api.DotPathException;
+import com.github.rmkane.dotpath.internal.operations.MapOperations;
+import com.github.rmkane.dotpath.internal.operations.PropertyOperations;
 
 /**
  * Handles path traversal operations with consistent behavior for maps and objects.

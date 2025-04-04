@@ -1,11 +1,11 @@
-package com.rmkane.dotpath.api;
+package com.github.rmkane.dotpath.api;
 
-import com.rmkane.dotpath.internal.TypeResolver;
-import com.rmkane.dotpath.internal.ValidationUtils;
-import com.rmkane.dotpath.internal.operations.MapOperations;
-import com.rmkane.dotpath.internal.operations.PropertyOperations;
-import com.rmkane.dotpath.internal.traversal.PathTraverser;
-import com.rmkane.dotpath.internal.traversal.PropertyContext;
+import com.github.rmkane.dotpath.internal.TypeResolver;
+import com.github.rmkane.dotpath.internal.ValidationUtils;
+import com.github.rmkane.dotpath.internal.operations.MapOperations;
+import com.github.rmkane.dotpath.internal.operations.PropertyOperations;
+import com.github.rmkane.dotpath.internal.traversal.PathTraverser;
+import com.github.rmkane.dotpath.internal.traversal.PropertyContext;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

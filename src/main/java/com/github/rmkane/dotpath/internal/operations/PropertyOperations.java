@@ -1,20 +1,26 @@
-package com.rmkane.dotpath.internal.operations;
+package com.github.rmkane.dotpath.internal.operations;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import com.rmkane.dotpath.api.DotPathException;
+import com.github.rmkane.dotpath.api.DotPathException;
 
-/** Handles operations specific to object properties. */
+/**
+ * Handles operations specific to object properties.
+ */
 public class PropertyOperations {
-    /** Gets a value from an object using a property name. */
+    /**
+     * Gets a value from an object using a property name.
+     */
     public Object getValueFromObject(Object obj, String propertyName) throws Exception {
         return getPropertyValue(obj, propertyName);
     }
 
-    /** Retrieves a property value from an object using reflection. */
+    /**
+     * Retrieves a property value from an object using reflection.
+     */
     public Object getPropertyValue(Object obj, String propertyName)
             throws IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         String getter = "get" + capitalize(propertyName);
@@ -28,7 +34,9 @@ public class PropertyOperations {
         }
     }
 
-    /** Sets a value on an object using a property name. */
+    /**
+     * Sets a value on an object using a property name.
+     */
     public <T> void setValueOnObject(Object obj, String propertyName, T value) throws Exception {
         if (obj instanceof Map<?, ?>) {
             @SuppressWarnings("unchecked")
@@ -62,7 +70,9 @@ public class PropertyOperations {
         field.set(obj, value);
     }
 
-    /** Checks if two types are compatible for assignment. */
+    /**
+     * Checks if two types are compatible for assignment.
+     */
     private boolean isCompatibleType(Class<?> sourceType, Class<?> targetType) {
         // Handle primitive types and their wrapper classes
         if (sourceType.isPrimitive() || targetType.isPrimitive()) {
@@ -78,7 +88,9 @@ public class PropertyOperations {
         return targetType.isAssignableFrom(sourceType);
     }
 
-    /** Checks if primitive types are compatible. */
+    /**
+     * Checks if primitive types are compatible.
+     */
     private boolean isPrimitiveCompatible(Class<?> sourceType, Class<?> targetType) {
         if (sourceType == targetType) {
             return true;
@@ -121,7 +133,9 @@ public class PropertyOperations {
         return false;
     }
 
-    /** Creates and sets an intermediate object for a path segment. */
+    /**
+     * Creates and sets an intermediate object for a path segment.
+     */
     public Object createAndSetIntermediateObject(Object current, String part) throws Exception {
         Field field = current.getClass().getDeclaredField(part);
         field.setAccessible(true);
@@ -131,7 +145,9 @@ public class PropertyOperations {
         return instance;
     }
 
-    /** Capitalizes the first character of a string. */
+    /**
+     * Capitalizes the first character of a string.
+     */
     public String capitalize(String s) {
         return s.isEmpty() ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }

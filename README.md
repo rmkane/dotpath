@@ -1,6 +1,7 @@
 # DotPath
 
-A Java library for accessing nested properties using dot notation (e.g., "user.address.street"). DotPath makes it easy to get, set, and copy deeply nested properties in Java objects and maps.
+A Java library for accessing nested properties using dot notation (e.g., "user.address.street"). DotPath makes it easy
+to get, set, and copy deeply nested properties in Java objects and maps.
 
 ## Features
 
@@ -16,8 +17,9 @@ A Java library for accessing nested properties using dot notation (e.g., "user.a
 Add the following Maven dependency to your `pom.xml`:
 
 ```xml
+
 <dependency>
-    <groupId>com.rmkane.dotpath</groupId>
+    <groupId>com.github.rmkane</groupId>
     <artifactId>dotpath</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
@@ -41,24 +43,32 @@ State state = State.builder()
         .build();
 
 // Get values using dot notation
-Integer count = DotPath.get(state, "count");              // 42
-Integer x = DotPath.get(state, "position.x");             // 10
+Integer count = DotPath.get(state, "count");     // 42
+Integer x = DotPath.get(state, "position.x");    // 10
 
 // Set values using dot notation
-DotPath.set(state, "count", 100);                         // state.count = 100
-DotPath.set(state, "position.x", 30);                     // state.position.x = 30
+DotPath.
+
+set(state, "count",100);                         // state.count = 100
+DotPath.
+
+set(state, "position.x",30);                     // state.position.x = 30
 ```
 
 ### String Conversion and Property Copying
 
 ```java
 // Set values from strings (with automatic type conversion)
-DotPath.setFromString(state, "count", "200");             // state.count = 200
-DotPath.setFromString(state, "position.y", "40");         // state.position.y = 40
+DotPath.setFromString(state, "count","200");     // state.count = 200
+DotPath.
+
+setFromString(state, "position.y","40");         // state.position.y = 40
 
 // Copy properties between objects
 State target = State.builder().build();
-DotPath.copy(source, target, "position.x");               // Copies x coordinate
+DotPath.
+
+copy(source, target, "position.x");              // Copies x coordinate
 ```
 
 ### Map Support
@@ -67,15 +77,23 @@ The library provides seamless support for working with Maps:
 
 ```java
 Map<String, Object> map = new HashMap<>();
-map.put("level", 5);
-map.put("nested", new HashMap<>());
+map.
+
+put("level",5);
+map.
+
+put("nested",new HashMap<>());
 
 // Get/set values in maps
-DotPath.set(map, "level", 10);                            // map.level = 10
-DotPath.set(map, "nested.value", "test");                 // Creates nested structure
+        DotPath.
 
-Integer level = DotPath.get(map, "level");                // 10
-String value = DotPath.get(map, "nested.value");          // "test"
+set(map, "level",10);                            // map.level = 10
+DotPath.
+
+set(map, "nested.value","test");                 // Creates nested structure
+
+Integer level = DotPath.get(map, "level");       // 10
+String value = DotPath.get(map, "nested.value"); // "test"
 ```
 
 ## Development
@@ -83,7 +101,7 @@ String value = DotPath.get(map, "nested.value");          // "test"
 ### Package Structure
 
 ```
-com.rmkane.dotpath
+com.github.rmkane.dotpath
 ├── api                          # Public API classes
 │   ├── DotPath.java               # API logic
 │   └── DotPathException.java      # Exception
@@ -117,12 +135,14 @@ make open-docs
 ```
 
 The project uses git hooks to ensure code quality:
+
 - Pre-commit hook: Runs `spotless:check` to verify code formatting before each commit
 - Hooks are automatically installed when running `make all` or `make setup-hooks`
 
 ### Documentation
 
 The generated documentation will be available at:
+
 ```
 target/reports/apidocs/index.html
 ```
