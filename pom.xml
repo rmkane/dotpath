@@ -5,7 +5,7 @@
 
     <groupId>io.github.rmkane</groupId>
     <artifactId>dotpath</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>DotPath</name>
