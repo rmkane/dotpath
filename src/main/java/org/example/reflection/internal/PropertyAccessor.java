@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.example.reflection.ReflectionException;
+
 /** Handles property access operations. */
 public class PropertyAccessor {
     /** Gets a value from an object using a property name. */
@@ -35,6 +37,18 @@ public class PropertyAccessor {
             return;
         }
 
+        // Get the field type
+        Field field = obj.getClass().getDeclaredField(propertyName);
+        field.setAccessible(true);
+        Class<?> fieldType = field.getType();
+
+        // Check if the value's type is compatible with the field type
+        if (!isCompatibleType(value.getClass(), fieldType)) {
+            throw new ReflectionException(String.format(
+                    "Type mismatch: value type %s is not compatible with field type %s",
+                    value.getClass().getName(), fieldType.getName()));
+        }
+
         String setter = "set" + capitalize(propertyName);
         for (Method m : obj.getClass().getMethods()) {
             if (m.getName().equals(setter)
@@ -45,9 +59,66 @@ public class PropertyAccessor {
             }
         }
 
-        Field field = obj.getClass().getDeclaredField(propertyName);
-        field.setAccessible(true);
         field.set(obj, value);
+    }
+
+    /** Checks if two types are compatible for assignment. */
+    private boolean isCompatibleType(Class<?> sourceType, Class<?> targetType) {
+        // Handle primitive types and their wrapper classes
+        if (sourceType.isPrimitive() || targetType.isPrimitive()) {
+            return isPrimitiveCompatible(sourceType, targetType);
+        }
+
+        // Handle arrays
+        if (sourceType.isArray() && targetType.isArray()) {
+            return isCompatibleType(sourceType.getComponentType(), targetType.getComponentType());
+        }
+
+        // Handle regular classes
+        return targetType.isAssignableFrom(sourceType);
+    }
+
+    /** Checks if primitive types are compatible. */
+    private boolean isPrimitiveCompatible(Class<?> sourceType, Class<?> targetType) {
+        if (sourceType == targetType) {
+            return true;
+        }
+
+        // Handle primitive and wrapper combinations
+        if (sourceType == int.class
+                && (targetType == Integer.class || targetType == long.class || targetType == Long.class)) {
+            return true;
+        }
+        if (sourceType == Integer.class
+                && (targetType == int.class || targetType == long.class || targetType == Long.class)) {
+            return true;
+        }
+        if (sourceType == long.class && (targetType == Long.class)) {
+            return true;
+        }
+        if (sourceType == Long.class && (targetType == long.class)) {
+            return true;
+        }
+        if (sourceType == double.class && (targetType == Double.class)) {
+            return true;
+        }
+        if (sourceType == Double.class && (targetType == double.class)) {
+            return true;
+        }
+        if (sourceType == float.class && (targetType == Float.class)) {
+            return true;
+        }
+        if (sourceType == Float.class && (targetType == float.class)) {
+            return true;
+        }
+        if (sourceType == boolean.class && (targetType == Boolean.class)) {
+            return true;
+        }
+        if (sourceType == Boolean.class && (targetType == boolean.class)) {
+            return true;
+        }
+
+        return false;
     }
 
     /** Creates and sets an intermediate object for a path segment. */

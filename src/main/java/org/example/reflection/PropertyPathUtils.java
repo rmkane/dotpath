@@ -87,20 +87,39 @@ public class PropertyPathUtils {
     }
 
     /**
-     * Copies a value from one object to another using a dot-notation path.
+     * Copies a property value from source to target object.
      *
-     * @param source The source object
-     * @param target The target object
-     * @param path The dot-notation path to the desired property
-     * @throws ReflectionException if the path is invalid or inaccessible
+     * @param source Source object to copy from
+     * @param target Target object to copy to
+     * @param path Property path to copy
+     * @throws ReflectionException if types are incompatible or property not found
      */
-    public static <T> void copy(Object source, Object target, String path) throws ReflectionException {
-        validationUtils.validateInput(source, "source");
-        validationUtils.validateInput(target, "target");
-        validationUtils.validateInput(path, "path");
+    public static void copy(Object source, Object target, String path) throws ReflectionException {
+        if (source == null || target == null) {
+            throw new ReflectionException("Source and target objects cannot be null");
+        }
 
-        T value = get(source, path);
-        set(target, path, value);
+        // First check if source and target are of compatible types
+        if (!source.getClass().equals(target.getClass())) {
+            throw new ReflectionException(String.format(
+                    "Source type %s and target type %s are incompatible",
+                    source.getClass().getName(), target.getClass().getName()));
+        }
+
+        try {
+            Class<?> sourceType = typeResolver.resolveType(source, path);
+            Class<?> targetType = typeResolver.resolveType(target, path);
+
+            if (!typeResolver.isCompatibleType(sourceType, targetType)) {
+                throw new ReflectionException(String.format(
+                        "Type mismatch: cannot copy from %s to %s", sourceType.getName(), targetType.getName()));
+            }
+
+            Object value = get(source, path);
+            set(target, path, value);
+        } catch (Exception e) {
+            throw new ReflectionException("Failed to copy property: " + e.getMessage(), e);
+        }
     }
 
     /**

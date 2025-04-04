@@ -1,6 +1,8 @@
 package org.example.reflection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -126,6 +128,29 @@ class PropertyPathUtilsTest {
 
         PropertyPathUtils.copy(source, target, "properties.score");
         assertEquals(1000, target.getProperties().get("score"));
+
+        // Test type incompatibility with completely different types
+        String incompatibleTarget = "This is a String, not a State";
+
+        // Try to copy from State to String
+        ReflectionException exception = assertThrows(ReflectionException.class, () -> {
+            PropertyPathUtils.copy(source, incompatibleTarget, "count");
+        });
+        assertTrue(
+                exception
+                        .getMessage()
+                        .contains(
+                                "Source type org.example.reflection.model.State and target type java.lang.String are incompatible"));
+
+        // Try to copy from String to State
+        exception = assertThrows(ReflectionException.class, () -> {
+            PropertyPathUtils.copy(incompatibleTarget, source, "player");
+        });
+        assertTrue(
+                exception
+                        .getMessage()
+                        .contains(
+                                "Source type java.lang.String and target type org.example.reflection.model.State are incompatible"));
     }
 
     @Test

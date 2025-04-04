@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.example.reflection.ReflectionException;
+
 /** Handles type resolution and conversion. */
 public class TypeResolver {
     private final PropertyAccessor propertyAccessor = new PropertyAccessor();
@@ -16,28 +18,40 @@ public class TypeResolver {
     /** Resolves the type of property at a given path. */
     public Class<?> resolveType(Object root, String path) throws Exception {
         String[] parts = path.split("\\.");
-        Class<?> currentClass = root.getClass();
+        Object current = root;
 
         for (int i = 0; i < parts.length - 1; i++) {
             String part = parts[i];
             validationUtils.validatePathSegment(part);
 
-            if (Map.class.isAssignableFrom(currentClass)) {
-                currentClass = Object.class; // assume Object value inside map
+            if (current instanceof Map<?, ?>) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> map = (Map<String, Object>) current;
+                current = map.get(part);
+                if (current == null) {
+                    return Object.class;
+                }
                 continue;
             }
 
-            currentClass = resolveTypeForPathSegment(currentClass, part);
+            current = propertyAccessor.getPropertyValue(current, part);
         }
 
         String last = parts[parts.length - 1];
         validationUtils.validatePathSegment(last);
 
-        if (Map.class.isAssignableFrom(currentClass)) {
-            return Object.class;
+        if (current instanceof Map<?, ?>) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) current;
+            Object value = map.get(last);
+            if (value == null) {
+                return Object.class;
+            }
+            return value.getClass();
         }
 
-        return resolveTypeForPathSegment(currentClass, last);
+        // For the last segment, always use the declared type from the class
+        return resolveTypeForPathSegment(current.getClass(), last);
     }
 
     /** Resolves the type for a path segment. */
@@ -47,9 +61,14 @@ public class TypeResolver {
             Method method = currentClass.getMethod(getter);
             return method.getReturnType();
         } catch (NoSuchMethodException e) {
-            Field field = currentClass.getDeclaredField(part);
-            field.setAccessible(true);
-            return field.getType();
+            try {
+                Field field = currentClass.getDeclaredField(part);
+                field.setAccessible(true);
+                return field.getType();
+            } catch (NoSuchFieldException e2) {
+                throw new ReflectionException(
+                        String.format("Property '%s' not found in class %s", part, currentClass.getName()));
+            }
         }
     }
 
@@ -91,5 +110,59 @@ public class TypeResolver {
             }
         }
         throw new IllegalArgumentException("Unsupported type: " + type.getName());
+    }
+
+    /** Checks if two types are compatible for copying. */
+    public boolean isCompatibleType(Class<?> sourceType, Class<?> targetType) {
+        // If target is Object, it can accept any type
+        if (targetType == Object.class) {
+            return true;
+        }
+
+        // Handle primitive type conversions
+        if (sourceType.isPrimitive() || targetType.isPrimitive()) {
+            return isPrimitiveCompatible(sourceType, targetType);
+        }
+
+        // For non-primitive types, check assignability
+        return targetType.isAssignableFrom(sourceType);
+    }
+
+    /** Checks compatibility between primitive types. */
+    private boolean isPrimitiveCompatible(Class<?> sourceType, Class<?> targetType) {
+        // Convert to wrapper types for comparison
+        Class<?> sourceWrapper = sourceType.isPrimitive() ? getWrapperType(sourceType) : sourceType;
+        Class<?> targetWrapper = targetType.isPrimitive() ? getWrapperType(targetType) : targetType;
+
+        // Special case: allow numeric conversions
+        if (isNumeric(sourceWrapper) && isNumeric(targetWrapper)) {
+            return true;
+        }
+
+        return targetWrapper.isAssignableFrom(sourceWrapper);
+    }
+
+    /** Gets the wrapper type for a primitive type. */
+    private Class<?> getWrapperType(Class<?> primitiveType) {
+        if (primitiveType == int.class) return Integer.class;
+        if (primitiveType == long.class) return Long.class;
+        if (primitiveType == double.class) return Double.class;
+        if (primitiveType == float.class) return Float.class;
+        if (primitiveType == boolean.class) return Boolean.class;
+        if (primitiveType == char.class) return Character.class;
+        if (primitiveType == byte.class) return Byte.class;
+        if (primitiveType == short.class) return Short.class;
+        return primitiveType;
+    }
+
+    /** Checks if a type is numeric. */
+    private boolean isNumeric(Class<?> type) {
+        return Number.class.isAssignableFrom(type)
+                || type == int.class
+                || type == long.class
+                || type == double.class
+                || type == float.class
+                || type == byte.class
+                || type == short.class;
     }
 }
