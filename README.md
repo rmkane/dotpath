@@ -105,3 +105,30 @@ mvn test
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Documentation
+
+You can generate and view the documentation using Make:
+
+```bash
+# Generate Javadoc documentation
+make docs
+
+# Generate Javadoc JAR (for publishing)
+make docs-jar
+
+# Generate and open documentation in your default browser
+make open-docs
+```
+
+Alternatively, you can use Maven directly:
+
+```bash
+# Generate documentation
+mvn javadoc:javadoc
+
+# Generate Javadoc JAR
+mvn javadoc:jar
+```
+
+The generated documentation will be available in `target/reports/apidocs/`. Open `index.html` in your web browser to view it.

@@ -1,10 +1,11 @@
 MVN := mvn
+DOCS_DIR := target/reports/apidocs
 
-.PHONY: all clean compile test verify run deps update format checkstyle site help
+.PHONY: all clean compile test verify run deps update format checkstyle site help docs docs-jar open-docs
 
 .DEFAULT_GOAL := all
 
-all: format verify # Alias for verify
+all: format verify docs  # Alias for verify
 
 clean: # Clean build artifacts
 	$(MVN) clean
@@ -19,7 +20,7 @@ verify: # Compile, run tests, and verify
 	$(MVN) verify
 
 run: # Run the application
-	$(MVN) exec:java -Dexec.mainClass="org.example.reflection.ReflectionUtils"
+	$(MVN) exec:java -Dexec.mainClass="org.example.reflection.api.PropertyPathUtils"
 
 deps: # Show dependency tree
 	$(MVN) dependency:tree
@@ -35,6 +36,21 @@ checkstyle: # Check code style
 
 site: # Generate site documentation
 	$(MVN) site
+
+docs: # Generate Javadoc documentation
+	$(MVN) javadoc:javadoc
+	@echo "Documentation generated in $(DOCS_DIR)/"
+
+docs-jar: # Generate Javadoc JAR
+	$(MVN) javadoc:jar
+	@echo "Javadoc JAR generated in target/"
+
+open-docs: docs # Generate and open documentation in default browser
+ifeq ($(shell uname), Darwin)
+	open $(DOCS_DIR)/index.html
+else
+	xdg-open $(DOCS_DIR)/index.html 2>/dev/null || echo "Could not open browser automatically. Please open $(DOCS_DIR)/index.html manually."
+endif
 
 help: # Show help message
 	@echo "Available targets:"

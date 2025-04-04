@@ -45,13 +45,18 @@ public class MapOperations {
     }
 
     /**
-     * Casts an object to a Map<String, Object>.
+     * Casts an object to a Map&lt;String, Object&gt;.
      *
      * @param obj The object to cast
-     * @return The object as a Map<String, Object>
+     * @return The object as a Map&lt;String, Object&gt;
+     * @throws ReflectionException if the object is not a Map
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> asMap(Object obj) {
-        return (Map<String, Object>) obj;
+    public Map<String, Object> asMap(Object obj) throws ReflectionException {
+        if (obj instanceof Map<?, ?>) {
+            return (Map<String, Object>) obj;
+        } else {
+            throw new ReflectionException("Object is not a Map");
+        }
     }
 }
