@@ -4,7 +4,7 @@
  * <p>This package provides:</p>
  * <ul>
  *   <li>{@code PathTraverser} - Core logic for navigating through object properties</li>
- *   <li>{@code PathTraversalResult} - Represents the result of a path traversal operation</li>
+ *   <li>{@code PropertyContext} - Represents the context for property operations</li>
  * </ul>
  *
  * <p>The traversal system supports:</p>

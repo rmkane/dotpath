@@ -4,8 +4,8 @@ import org.example.reflection.internal.TypeResolver;
 import org.example.reflection.internal.ValidationUtils;
 import org.example.reflection.internal.operations.MapOperations;
 import org.example.reflection.internal.operations.PropertyOperations;
-import org.example.reflection.internal.traversal.PathTraversalResult;
 import org.example.reflection.internal.traversal.PathTraverser;
+import org.example.reflection.internal.traversal.PropertyContext;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -27,10 +27,10 @@ public final class PropertyPathUtils {
      *
      * @param root The root object to traverse
      * @param path The dot-notation path to traverse
-     * @return A pair containing the final object and the final property name
+     * @return A context containing the final object and property name
      * @throws ReflectionException if the path is invalid or inaccessible
      */
-    private static PathTraversalResult traversePath(Object root, String path) throws ReflectionException {
+    private static PropertyContext traversePath(Object root, String path) throws ReflectionException {
         validationUtils.validateInput(root, path);
 
         String[] parts = path.split("\\.");
@@ -40,13 +40,13 @@ public final class PropertyPathUtils {
             String part = parts[i];
             validationUtils.validatePathSegment(part);
 
-            current = pathTraverser.traversePathAndCreateIfNeeded(new PathTraversalResult(current, part));
+            current = pathTraverser.traversePathAndCreateIfNeeded(new PropertyContext(current, part));
         }
 
         String finalPart = parts[parts.length - 1];
         validationUtils.validatePathSegment(finalPart);
 
-        return new PathTraversalResult(current, finalPart);
+        return new PropertyContext(current, finalPart);
     }
 
     /**
@@ -59,9 +59,9 @@ public final class PropertyPathUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(Object root, String path) throws ReflectionException {
-        PathTraversalResult result = traversePath(root, path);
-        Object target = result.getTarget();
-        String propertyName = result.getPropertyName();
+        PropertyContext context = traversePath(root, path);
+        Object target = context.getTarget();
+        String propertyName = context.getPropertyName();
 
         if (mapOperations.isMap(target)) {
             return mapOperations.getValue(mapOperations.asMap(target), propertyName);
@@ -83,9 +83,9 @@ public final class PropertyPathUtils {
      * @throws ReflectionException if the path is invalid or inaccessible
      */
     public static <T> void set(Object root, String path, T value) throws ReflectionException {
-        PathTraversalResult result = traversePath(root, path);
-        Object target = result.getTarget();
-        String propertyName = result.getPropertyName();
+        PropertyContext context = traversePath(root, path);
+        Object target = context.getTarget();
+        String propertyName = context.getPropertyName();
 
         try {
             if (mapOperations.isMap(target)) {

@@ -12,7 +12,7 @@ public class PathTraverser {
     private final PropertyOperations propertyOperations = new PropertyOperations();
 
     /** Traverses a path in an object and returns the object at the specified path segment. */
-    public Object traversePath(PathTraversalResult result) throws ReflectionException {
+    public Object traversePath(PropertyContext result) throws ReflectionException {
         if (result.getTarget() == null) {
             throw new ReflectionException("Null while traversing: " + result.getPropertyName());
         }
@@ -33,7 +33,7 @@ public class PathTraverser {
      * Traverses a path in an object and returns the object at the specified path segment, creating
      * intermediate objects if needed.
      */
-    public Object traversePathAndCreateIfNeeded(PathTraversalResult result) throws ReflectionException {
+    public Object traversePathAndCreateIfNeeded(PropertyContext result) throws ReflectionException {
         if (result.getTarget() == null) {
             throw new ReflectionException("Null while traversing: " + result.getPropertyName());
         }
@@ -69,7 +69,7 @@ public class PathTraverser {
     }
 
     /** Handles null checks and map operations for path traversal. */
-    private Object handleMapOrNull(PathTraversalResult result) throws ReflectionException {
+    private Object handleMapOrNull(PropertyContext result) throws ReflectionException {
         if (result.getTarget() instanceof Map<?, ?> map) {
             Object next = map.get(result.getPropertyName());
             if (next == null) {
