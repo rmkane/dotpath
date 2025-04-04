@@ -19,8 +19,11 @@ test: # Run tests
 verify: # Compile, run tests, and verify
 	$(MVN) verify
 
-deploy: # Deploy the package to the remote repository
-	$(MVN) deploy
+deploy-github: # Deploy the package to the GitHub repository
+	$(MVN) deploy -P github
+
+deploy-central: # Deploy the package to the Maven Central repository
+	$(MVN) deploy -P central
 
 deps: # Show dependency tree
 	$(MVN) dependency:tree
