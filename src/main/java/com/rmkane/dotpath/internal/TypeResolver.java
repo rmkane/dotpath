@@ -2,21 +2,40 @@ package com.rmkane.dotpath.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.rmkane.dotpath.api.DotPathException;
+import com.rmkane.dotpath.internal.operations.MapOperations;
 import com.rmkane.dotpath.internal.operations.PropertyOperations;
 
-/** Handles type resolution and conversion. */
+/**
+ * Handles type resolution and conversion.
+ */
 public class TypeResolver {
+    private static final Map<Class<?>, TypeConverter<?>> TYPE_CONVERTERS = new HashMap<>();
+
+    private final MapOperations mapOperations = new MapOperations();
     private final PropertyOperations propertyOperations = new PropertyOperations();
     private final ValidationUtils validationUtils = new ValidationUtils();
 
-    /** Resolves the type of property at a given path. */
+    static {
+        // Register basic type converters
+        registerConverter(Integer.class, Integer::parseInt);
+        registerConverter(Long.class, Long::parseLong);
+        registerConverter(Double.class, Double::parseDouble);
+        registerConverter(Float.class, Float::parseFloat);
+        registerConverter(Boolean.class, Boolean::parseBoolean);
+        registerConverter(LocalDate.class, str -> LocalDate.parse(str, DateTimeFormatter.ISO_DATE));
+        registerConverter(LocalDateTime.class, str -> LocalDateTime.parse(str, DateTimeFormatter.ISO_DATE_TIME));
+    }
+
+    /**
+     * Resolves the type of property at a given path.
+     */
     public Class<?> resolveType(Object root, String path) throws Exception {
         String[] parts = path.split("\\.");
         Object current = root;
@@ -25,13 +44,8 @@ public class TypeResolver {
             String part = parts[i];
             validationUtils.validatePathSegment(part);
 
-            if (current instanceof Map<?, ?>) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> map = (Map<String, Object>) current;
-                current = map.get(part);
-                if (current == null) {
-                    return Object.class;
-                }
+            if (mapOperations.isMap(current)) {
+                current = mapOperations.getValueOrDefault(current, part, Object.class);
                 continue;
             }
 
@@ -41,21 +55,17 @@ public class TypeResolver {
         String last = parts[parts.length - 1];
         validationUtils.validatePathSegment(last);
 
-        if (current instanceof Map<?, ?>) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) current;
-            Object value = map.get(last);
-            if (value == null) {
-                return Object.class;
-            }
-            return value.getClass();
+        if (mapOperations.isMap(current)) {
+            return mapOperations.getValueType(current, last);
         }
 
         // For the last segment, always use the declared type from the class
         return resolveTypeForPathSegment(current.getClass(), last);
     }
 
-    /** Resolves the type for a path segment. */
+    /**
+     * Resolves the type for a path segment.
+     */
     public Class<?> resolveTypeForPathSegment(Class<?> currentClass, String part) throws Exception {
         String getter = "get" + propertyOperations.capitalize(part);
         try {
@@ -73,47 +83,70 @@ public class TypeResolver {
         }
     }
 
-    /** Parses a string value into the specified type. */
+    /**
+     * Parses a string value into the specified type.
+     */
     @SuppressWarnings("unchecked")
-    public <T> T parseValueByType(Class<T> type, String valueStr) {
-        if (type == int.class || type == Integer.class) {
-            return (T) Integer.valueOf(Integer.parseInt(valueStr));
+    public <T> T parseValueByType(Class<T> type, String valueStr) throws DotPathException {
+        if (valueStr == null) {
+            return null;
         }
-        if (type == long.class || type == Long.class) {
-            return (T) Long.valueOf(Long.parseLong(valueStr));
-        }
-        if (type == double.class || type == Double.class) {
-            return (T) Double.valueOf(Double.parseDouble(valueStr));
-        }
-        if (type == boolean.class || type == Boolean.class) {
-            return (T) Boolean.valueOf(Boolean.parseBoolean(valueStr));
-        }
-        if (type == String.class) {
-            return (T) valueStr;
-        }
-        if (type == List.class || type == ArrayList.class) {
-            return (T) Arrays.stream(valueStr.split(",")).map(String::trim).collect(Collectors.toList());
-        }
-        if (type == Object.class) {
-            // For Object type, try to determine the most appropriate type
+
+        // Try registered converters first
+        TypeConverter<?> converter = TYPE_CONVERTERS.get(type);
+        if (converter != null) {
             try {
+                return (T) converter.convert(valueStr);
+            } catch (Exception e) {
+                throw new DotPathException("Failed to convert value '" + valueStr + "' to type " + type.getName(), e);
+            }
+        }
+
+        // Fall back to existing conversion logic
+        try {
+            if (type == int.class || type == Integer.class) {
                 return (T) Integer.valueOf(Integer.parseInt(valueStr));
-            } catch (NumberFormatException e) {
+            }
+            if (type == long.class || type == Long.class) {
+                return (T) Long.valueOf(Long.parseLong(valueStr));
+            }
+            if (type == double.class || type == Double.class) {
+                return (T) Double.valueOf(Double.parseDouble(valueStr));
+            }
+            if (type == boolean.class || type == Boolean.class) {
+                return (T) Boolean.valueOf(Boolean.parseBoolean(valueStr));
+            }
+            if (type == String.class) {
+                return (T) valueStr;
+            }
+            if (type == List.class || type == ArrayList.class) {
+                return (T) Arrays.stream(valueStr.split(",")).map(String::trim).collect(Collectors.toList());
+            }
+            if (type == Object.class) {
+                // For Object type, try to determine the most appropriate type
                 try {
-                    return (T) Double.valueOf(Double.parseDouble(valueStr));
-                } catch (NumberFormatException e2) {
-                    if (valueStr.equalsIgnoreCase("true") || valueStr.equalsIgnoreCase("false")) {
-                        return (T) Boolean.valueOf(Boolean.parseBoolean(valueStr));
-                    } else {
-                        return (T) valueStr;
+                    return (T) Integer.valueOf(Integer.parseInt(valueStr));
+                } catch (NumberFormatException e) {
+                    try {
+                        return (T) Double.valueOf(Double.parseDouble(valueStr));
+                    } catch (NumberFormatException e2) {
+                        if (valueStr.equalsIgnoreCase("true") || valueStr.equalsIgnoreCase("false")) {
+                            return (T) Boolean.valueOf(Boolean.parseBoolean(valueStr));
+                        } else {
+                            return (T) valueStr;
+                        }
                     }
                 }
             }
+            throw new DotPathException("Unsupported type: " + type.getName());
+        } catch (Exception e) {
+            throw new DotPathException("Failed to convert value '" + valueStr + "' to type " + type.getName(), e);
         }
-        throw new IllegalArgumentException("Unsupported type: " + type.getName());
     }
 
-    /** Checks if two types are compatible for copying. */
+    /**
+     * Checks if two types are compatible for copying.
+     */
     public boolean isCompatibleType(Class<?> sourceType, Class<?> targetType) {
         // If target is Object, it can accept any type
         if (targetType == Object.class) {
@@ -129,7 +162,9 @@ public class TypeResolver {
         return targetType.isAssignableFrom(sourceType);
     }
 
-    /** Checks compatibility between primitive types. */
+    /**
+     * Checks compatibility between primitive types.
+     */
     private boolean isPrimitiveCompatible(Class<?> sourceType, Class<?> targetType) {
         // Convert to wrapper types for comparison
         Class<?> sourceWrapper = sourceType.isPrimitive() ? getWrapperType(sourceType) : sourceType;
@@ -143,7 +178,9 @@ public class TypeResolver {
         return targetWrapper.isAssignableFrom(sourceWrapper);
     }
 
-    /** Gets the wrapper type for a primitive type. */
+    /**
+     * Gets the wrapper type for a primitive type.
+     */
     private Class<?> getWrapperType(Class<?> primitiveType) {
         if (primitiveType == int.class) return Integer.class;
         if (primitiveType == long.class) return Long.class;
@@ -156,7 +193,9 @@ public class TypeResolver {
         return primitiveType;
     }
 
-    /** Checks if a type is numeric. */
+    /**
+     * Checks if a type is numeric.
+     */
     private boolean isNumeric(Class<?> type) {
         return Number.class.isAssignableFrom(type)
                 || type == int.class
@@ -165,5 +204,14 @@ public class TypeResolver {
                 || type == float.class
                 || type == byte.class
                 || type == short.class;
+    }
+
+    private static void registerConverter(Class<?> type, TypeConverter<?> converter) {
+        TYPE_CONVERTERS.put(type, converter);
+    }
+
+    @FunctionalInterface
+    private interface TypeConverter<T> {
+        T convert(String value) throws Exception;
     }
 }
