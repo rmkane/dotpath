@@ -11,6 +11,28 @@
     <description>A Java library for accessing nested properties using dot notation</description>
     <url>https://github.com/rmkane/dotpath</url>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>rmkane</id>
+            <name>Ryan Kane</name>
+            <email>rmkane@proton.me</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/rmkane/dotpath</url>
+        <connection>scm:git:git://github.com/rmkane/dotpath.git</connection>
+        <developerConnection>scm:git:ssh://github.com/rmkane/dotpath.git</developerConnection>
+    </scm>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
