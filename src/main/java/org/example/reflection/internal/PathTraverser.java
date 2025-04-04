@@ -1,20 +1,16 @@
 package org.example.reflection.internal;
 
-import org.example.reflection.ReflectionException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-/**
- * Handles path traversal operations.
- */
+import org.example.reflection.ReflectionException;
+
+/** Handles path traversal operations. */
 public class PathTraverser {
     private final PropertyAccessor propertyAccessor = new PropertyAccessor();
 
-    /**
-     * Traverses a path in an object and returns the object at the specified path segment.
-     */
+    /** Traverses a path in an object and returns the object at the specified path segment. */
     public Object traversePath(Object current, String part) throws ReflectionException {
         Object result = handleMapOrNull(current, part);
         if (result != null) {
@@ -29,8 +25,8 @@ public class PathTraverser {
     }
 
     /**
-     * Traverses a path in an object and returns the object at the specified path segment,
-     * creating intermediate objects if needed.
+     * Traverses a path in an object and returns the object at the specified path segment, creating
+     * intermediate objects if needed.
      */
     public Object traversePathAndCreateIfNeeded(Object current, String part) throws ReflectionException {
         Object result = handleMapOrNull(current, part);
@@ -61,9 +57,7 @@ public class PathTraverser {
         }
     }
 
-    /**
-     * Handles null checks and map operations for path traversal.
-     */
+    /** Handles null checks and map operations for path traversal. */
     private Object handleMapOrNull(Object current, String part) throws ReflectionException {
         if (current == null) {
             throw new ReflectionException("Null while traversing: " + part);
@@ -79,4 +73,4 @@ public class PathTraverser {
 
         return null;
     }
-} 
+}

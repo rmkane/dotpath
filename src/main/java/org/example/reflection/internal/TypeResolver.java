@@ -8,16 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Handles type resolution and conversion.
- */
+/** Handles type resolution and conversion. */
 public class TypeResolver {
     private final PropertyAccessor propertyAccessor = new PropertyAccessor();
     private final ValidationUtils validationUtils = new ValidationUtils();
 
-    /**
-     * Resolves the type of property at a given path.
-     */
+    /** Resolves the type of property at a given path. */
     public Class<?> resolveType(Object root, String path) throws Exception {
         String[] parts = path.split("\\.");
         Class<?> currentClass = root.getClass();
@@ -44,9 +40,7 @@ public class TypeResolver {
         return resolveTypeForPathSegment(currentClass, last);
     }
 
-    /**
-     * Resolves the type for a path segment.
-     */
+    /** Resolves the type for a path segment. */
     public Class<?> resolveTypeForPathSegment(Class<?> currentClass, String part) throws Exception {
         String getter = "get" + propertyAccessor.capitalize(part);
         try {
@@ -59,9 +53,7 @@ public class TypeResolver {
         }
     }
 
-    /**
-     * Parses a string value into the specified type.
-     */
+    /** Parses a string value into the specified type. */
     @SuppressWarnings("unchecked")
     public <T> T parseValueByType(Class<T> type, String valueStr) {
         if (type == int.class || type == Integer.class) {
@@ -80,9 +72,7 @@ public class TypeResolver {
             return (T) valueStr;
         }
         if (type == List.class || type == ArrayList.class) {
-            return (T) Arrays.stream(valueStr.split(","))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
+            return (T) Arrays.stream(valueStr.split(",")).map(String::trim).collect(Collectors.toList());
         }
         if (type == Object.class) {
             // For Object type, try to determine the most appropriate type
@@ -102,4 +92,4 @@ public class TypeResolver {
         }
         throw new IllegalArgumentException("Unsupported type: " + type.getName());
     }
-} 
+}

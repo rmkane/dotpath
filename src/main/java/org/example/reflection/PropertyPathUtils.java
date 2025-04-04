@@ -1,17 +1,17 @@
 package org.example.reflection;
 
+import java.util.Map;
+
 import org.example.reflection.internal.PathTraverser;
 import org.example.reflection.internal.PropertyAccessor;
 import org.example.reflection.internal.TypeResolver;
 import org.example.reflection.internal.ValidationUtils;
 
-import java.util.Map;
-
 /**
- * Main utility class for reflection operations.
- * Provides high-level methods for getting and setting values using dot-notation paths.
+ * Main utility class for reflection operations. Provides high-level methods for getting and setting
+ * values using dot-notation paths.
  */
-public class ReflectionUtils {
+public class PropertyPathUtils {
     private static final PathTraverser pathTraverser = new PathTraverser();
     private static final PropertyAccessor propertyAccessor = new PropertyAccessor();
     private static final TypeResolver typeResolver = new TypeResolver();
@@ -58,8 +58,8 @@ public class ReflectionUtils {
     /**
      * Sets a value in an object using a dot-notation path.
      *
-     * @param root  The root object to traverse
-     * @param path  The dot-notation path to the desired property
+     * @param root The root object to traverse
+     * @param path The dot-notation path to the desired property
      * @param value The value to set
      * @throws ReflectionException if the path is invalid or inaccessible
      */
@@ -91,7 +91,7 @@ public class ReflectionUtils {
      *
      * @param source The source object
      * @param target The target object
-     * @param path   The dot-notation path to the desired property
+     * @param path The dot-notation path to the desired property
      * @throws ReflectionException if the path is invalid or inaccessible
      */
     public static <T> void copy(Object source, Object target, String path) throws ReflectionException {
@@ -104,10 +104,11 @@ public class ReflectionUtils {
     }
 
     /**
-     * Sets a value in an object using a dot-notation path, converting the string value to the appropriate type.
+     * Sets a value in an object using a dot-notation path, converting the string value to the
+     * appropriate type.
      *
-     * @param root     The root object to traverse
-     * @param path     The dot-notation path to the desired property
+     * @param root The root object to traverse
+     * @param path The dot-notation path to the desired property
      * @param valueStr The string value to convert and set
      * @throws ReflectionException if the path is invalid or inaccessible
      */

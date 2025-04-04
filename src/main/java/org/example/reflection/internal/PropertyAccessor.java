@@ -5,21 +5,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-/**
- * Handles property access operations.
- */
+/** Handles property access operations. */
 public class PropertyAccessor {
-    /**
-     * Gets a value from an object using a property name.
-     */
+    /** Gets a value from an object using a property name. */
     public Object getValueFromObject(Object obj, String propertyName) throws Exception {
         return getPropertyValue(obj, propertyName);
     }
 
-    /**
-     * Retrieves a property value from an object using reflection.
-     */
-    public Object getPropertyValue(Object obj, String propertyName) throws IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+    /** Retrieves a property value from an object using reflection. */
+    public Object getPropertyValue(Object obj, String propertyName)
+            throws IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         String getter = "get" + capitalize(propertyName);
         try {
             Method method = obj.getClass().getMethod(getter);
@@ -31,9 +26,7 @@ public class PropertyAccessor {
         }
     }
 
-    /**
-     * Sets a value on an object using a property name.
-     */
+    /** Sets a value on an object using a property name. */
     public <T> void setValueOnObject(Object obj, String propertyName, T value) throws Exception {
         if (obj instanceof Map<?, ?>) {
             @SuppressWarnings("unchecked")
@@ -57,9 +50,7 @@ public class PropertyAccessor {
         field.set(obj, value);
     }
 
-    /**
-     * Creates and sets an intermediate object for a path segment.
-     */
+    /** Creates and sets an intermediate object for a path segment. */
     public Object createAndSetIntermediateObject(Object current, String part) throws Exception {
         Field field = current.getClass().getDeclaredField(part);
         field.setAccessible(true);
@@ -69,10 +60,8 @@ public class PropertyAccessor {
         return instance;
     }
 
-    /**
-     * Capitalizes the first character of a string.
-     */
+    /** Capitalizes the first character of a string. */
     public String capitalize(String s) {
         return s.isEmpty() ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
-} 
+}
