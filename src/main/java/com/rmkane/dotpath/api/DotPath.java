@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
  * values using dot-notation paths.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PropertyPathUtils {
+public final class DotPath {
     private static final PathTraverser pathTraverser = new PathTraverser();
     private static final PropertyOperations propertyOperations = new PropertyOperations();
     private static final TypeResolver typeResolver = new TypeResolver();

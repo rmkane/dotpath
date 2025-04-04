@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import com.rmkane.dotpath.model.Point;
 import com.rmkane.dotpath.model.State;
 
-class PropertyPathUtilsTest {
+class DotPathTest {
     @Test
     void testGenericGetAndSet() throws Exception {
         // Create a State object with all properties set using builder pattern
@@ -35,70 +35,70 @@ class PropertyPathUtilsTest {
                 .build();
 
         // Test getting primitive types
-        Integer count = PropertyPathUtils.<Integer>get(state, "count");
+        Integer count = DotPath.<Integer>get(state, "count");
         assertEquals(42, count);
 
-        Double value = PropertyPathUtils.<Double>get(state, "value");
+        Double value = DotPath.<Double>get(state, "value");
         assertEquals(3.14, value);
 
         // Test getting String
-        String player = PropertyPathUtils.<String>get(state, "player");
+        String player = DotPath.<String>get(state, "player");
         assertEquals("Player1", player);
 
         // Test getting nested object properties
-        Point pos = PropertyPathUtils.<Point>get(state, "position");
+        Point pos = DotPath.<Point>get(state, "position");
         assertEquals(10, pos.getX());
         assertEquals(20, pos.getY());
 
         // Test getting nested object's properties directly
-        Integer posX = PropertyPathUtils.<Integer>get(state, "position.x");
+        Integer posX = DotPath.<Integer>get(state, "position.x");
         assertEquals(10, posX);
 
-        Integer posY = PropertyPathUtils.<Integer>get(state, "position.y");
+        Integer posY = DotPath.<Integer>get(state, "position.y");
         assertEquals(20, posY);
 
         // Test getting from properties map
-        Integer level = PropertyPathUtils.<Integer>get(state, "properties.level");
+        Integer level = DotPath.<Integer>get(state, "properties.level");
         assertEquals(5, level);
 
-        Integer score = PropertyPathUtils.<Integer>get(state, "properties.score");
+        Integer score = DotPath.<Integer>get(state, "properties.score");
         assertEquals(1000, score);
 
-        List<String> achievements = PropertyPathUtils.<List<String>>get(state, "properties.achievements");
+        List<String> achievements = DotPath.<List<String>>get(state, "properties.achievements");
         assertEquals(Arrays.asList("first_blood", "headshot"), achievements);
 
         // Test setting primitive types
-        PropertyPathUtils.set(state, "count", 100);
+        DotPath.set(state, "count", 100);
         assertEquals(100, state.getCount());
 
-        PropertyPathUtils.set(state, "value", 6.28);
+        DotPath.set(state, "value", 6.28);
         assertEquals(6.28, state.getValue());
 
         // Test setting String
-        PropertyPathUtils.set(state, "player", "Player2");
+        DotPath.set(state, "player", "Player2");
         assertEquals("Player2", state.getPlayer());
 
         // Test setting nested object
         Point newPos = Point.builder().x(30).y(40).build();
-        PropertyPathUtils.set(state, "position", newPos);
+        DotPath.set(state, "position", newPos);
         assertEquals(30, state.getPosition().getX());
         assertEquals(40, state.getPosition().getY());
 
         // Test setting nested object's properties directly
-        PropertyPathUtils.set(state, "position.x", 50);
+        DotPath.set(state, "position.x", 50);
         assertEquals(50, state.getPosition().getX());
 
-        PropertyPathUtils.set(state, "position.y", 60);
+        DotPath.set(state, "position.y", 60);
         assertEquals(60, state.getPosition().getY());
 
         // Test setting properties in map
-        PropertyPathUtils.set(state, "properties.level", 10);
+        DotPath.set(state, "properties.level", 10);
         assertEquals(10, state.getProperties().get("level"));
 
-        PropertyPathUtils.set(state, "properties.score", 2000);
+        DotPath.set(state, "properties.score", 2000);
         assertEquals(2000, state.getProperties().get("score"));
 
-        PropertyPathUtils.set(state, "properties.achievements", Arrays.asList("victory", "mvp"));
+        DotPath.set(state, "properties.achievements", Arrays.asList("victory", "mvp"));
         assertEquals(Arrays.asList("victory", "mvp"), state.getProperties().get("achievements"));
     }
 
@@ -123,33 +123,33 @@ class PropertyPathUtilsTest {
         State target = State.builder().build();
 
         // Copy primitive types
-        PropertyPathUtils.copy(source, target, "count");
+        DotPath.copy(source, target, "count");
         assertEquals(42, target.getCount());
 
-        PropertyPathUtils.copy(source, target, "value");
+        DotPath.copy(source, target, "value");
         assertEquals(3.14, target.getValue());
 
         // Copy String
-        PropertyPathUtils.copy(source, target, "player");
+        DotPath.copy(source, target, "player");
         assertEquals("Player1", target.getPlayer());
 
         // Copy nested object
-        PropertyPathUtils.copy(source, target, "position");
+        DotPath.copy(source, target, "position");
         assertEquals(10, target.getPosition().getX());
         assertEquals(20, target.getPosition().getY());
 
         // Copy nested object's properties directly
-        PropertyPathUtils.copy(source, target, "position.x");
+        DotPath.copy(source, target, "position.x");
         assertEquals(10, target.getPosition().getX());
 
-        PropertyPathUtils.copy(source, target, "position.y");
+        DotPath.copy(source, target, "position.y");
         assertEquals(20, target.getPosition().getY());
 
         // Copy properties from map
-        PropertyPathUtils.copy(source, target, "properties.level");
+        DotPath.copy(source, target, "properties.level");
         assertEquals(5, target.getProperties().get("level"));
 
-        PropertyPathUtils.copy(source, target, "properties.score");
+        DotPath.copy(source, target, "properties.score");
         assertEquals(1000, target.getProperties().get("score"));
 
         // Test type incompatibility with completely different types
@@ -157,7 +157,7 @@ class PropertyPathUtilsTest {
 
         // Try to copy from State to String
         DotPathException exception = assertThrows(DotPathException.class, () -> {
-            PropertyPathUtils.copy(source, incompatibleTarget, "count");
+            DotPath.copy(source, incompatibleTarget, "count");
         });
         assertTrue(
                 exception
@@ -167,7 +167,7 @@ class PropertyPathUtilsTest {
 
         // Try to copy from String to State
         exception = assertThrows(DotPathException.class, () -> {
-            PropertyPathUtils.copy(incompatibleTarget, source, "player");
+            DotPath.copy(incompatibleTarget, source, "player");
         });
         assertTrue(
                 exception
@@ -182,28 +182,28 @@ class PropertyPathUtilsTest {
         State state = State.builder().position(Point.builder().build()).build();
 
         // Test setting primitive types from strings
-        PropertyPathUtils.setFromString(state, "count", "42");
+        DotPath.setFromString(state, "count", "42");
         assertEquals(42, state.getCount());
 
-        PropertyPathUtils.setFromString(state, "value", "3.14");
+        DotPath.setFromString(state, "value", "3.14");
         assertEquals(3.14, state.getValue());
 
         // Test setting String
-        PropertyPathUtils.setFromString(state, "player", "Player1");
+        DotPath.setFromString(state, "player", "Player1");
         assertEquals("Player1", state.getPlayer());
 
         // Test setting nested object's properties from strings
-        PropertyPathUtils.setFromString(state, "position.x", "10");
+        DotPath.setFromString(state, "position.x", "10");
         assertEquals(10, state.getPosition().getX());
 
-        PropertyPathUtils.setFromString(state, "position.y", "20");
+        DotPath.setFromString(state, "position.y", "20");
         assertEquals(20, state.getPosition().getY());
 
         // Test setting properties in map
-        PropertyPathUtils.setFromString(state, "properties.level", "5");
+        DotPath.setFromString(state, "properties.level", "5");
         assertEquals(5, state.getProperties().get("level"));
 
-        PropertyPathUtils.setFromString(state, "properties.score", "1000");
+        DotPath.setFromString(state, "properties.score", "1000");
         assertEquals(1000, state.getProperties().get("score"));
     }
 
@@ -218,38 +218,38 @@ class PropertyPathUtilsTest {
         map.put("achievements", Arrays.asList("first_blood", "headshot"));
 
         // Test getting from map
-        Integer count = PropertyPathUtils.<Integer>get(map, "count");
+        Integer count = DotPath.<Integer>get(map, "count");
         assertEquals(42, count);
 
-        Double value = PropertyPathUtils.<Double>get(map, "value");
+        Double value = DotPath.<Double>get(map, "value");
         assertEquals(3.14, value);
 
-        String player = PropertyPathUtils.<String>get(map, "player");
+        String player = DotPath.<String>get(map, "player");
         assertEquals("Player1", player);
 
-        Integer level = PropertyPathUtils.<Integer>get(map, "level");
+        Integer level = DotPath.<Integer>get(map, "level");
         assertEquals(5, level);
 
-        Integer score = PropertyPathUtils.<Integer>get(map, "score");
+        Integer score = DotPath.<Integer>get(map, "score");
         assertEquals(1000, score);
 
-        List<String> achievements = PropertyPathUtils.<List<String>>get(map, "achievements");
+        List<String> achievements = DotPath.<List<String>>get(map, "achievements");
         assertEquals(Arrays.asList("first_blood", "headshot"), achievements);
 
         // Test setting in map
-        PropertyPathUtils.set(map, "count", 100);
+        DotPath.set(map, "count", 100);
         assertEquals(100, map.get("count"));
 
-        PropertyPathUtils.set(map, "player", "Player2");
+        DotPath.set(map, "player", "Player2");
         assertEquals("Player2", map.get("player"));
 
-        PropertyPathUtils.set(map, "level", 10);
+        DotPath.set(map, "level", 10);
         assertEquals(10, map.get("level"));
 
-        PropertyPathUtils.set(map, "score", 2000);
+        DotPath.set(map, "score", 2000);
         assertEquals(2000, map.get("score"));
 
-        PropertyPathUtils.set(map, "achievements", Arrays.asList("victory", "mvp"));
+        DotPath.set(map, "achievements", Arrays.asList("victory", "mvp"));
         assertEquals(Arrays.asList("victory", "mvp"), map.get("achievements"));
 
         // Test nested map operations
@@ -257,10 +257,10 @@ class PropertyPathUtilsTest {
         nestedMap.put("inner", "value");
         map.put("nested", nestedMap);
 
-        String innerValue = PropertyPathUtils.<String>get(map, "nested.inner");
+        String innerValue = DotPath.<String>get(map, "nested.inner");
         assertEquals("value", innerValue);
 
-        PropertyPathUtils.set(map, "nested.inner", "new value");
+        DotPath.set(map, "nested.inner", "new value");
         assertEquals("new value", ((Map<?, ?>) map.get("nested")).get("inner"));
     }
 
@@ -270,20 +270,20 @@ class PropertyPathUtilsTest {
         State state = State.builder().build();
 
         // Setting position.x should automatically create the Point object
-        PropertyPathUtils.set(state, "position.x", 10);
+        DotPath.set(state, "position.x", 10);
         assertNotNull(state.getPosition());
         assertEquals(10, state.getPosition().getX());
 
         // Setting position.y should use the existing Point object
-        PropertyPathUtils.set(state, "position.y", 20);
+        DotPath.set(state, "position.y", 20);
         assertEquals(20, state.getPosition().getY());
 
         // Getting position.x should work with the created Point
-        Integer x = PropertyPathUtils.get(state, "position.x");
+        Integer x = DotPath.get(state, "position.x");
         assertEquals(10, x);
 
         // Setting from string should also work
-        PropertyPathUtils.setFromString(state, "position.x", "30");
+        DotPath.setFromString(state, "position.x", "30");
         assertEquals(30, state.getPosition().getX());
     }
 }

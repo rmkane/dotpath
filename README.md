@@ -41,24 +41,24 @@ State state = State.builder()
         .build();
 
 // Get values using dot notation
-Integer count = PropertyPathUtils.get(state, "count");              // 42
-Integer x = PropertyPathUtils.get(state, "position.x");             // 10
+Integer count = DotPath.get(state, "count");              // 42
+Integer x = DotPath.get(state, "position.x");             // 10
 
 // Set values using dot notation
-PropertyPathUtils.set(state, "count", 100);                         // state.count = 100
-PropertyPathUtils.set(state, "position.x", 30);                     // state.position.x = 30
+DotPath.set(state, "count", 100);                         // state.count = 100
+DotPath.set(state, "position.x", 30);                     // state.position.x = 30
 ```
 
 ### String Conversion and Property Copying
 
 ```java
 // Set values from strings (with automatic type conversion)
-PropertyPathUtils.setFromString(state, "count", "200");             // state.count = 200
-PropertyPathUtils.setFromString(state, "position.y", "40");         // state.position.y = 40
+DotPath.setFromString(state, "count", "200");             // state.count = 200
+DotPath.setFromString(state, "position.y", "40");         // state.position.y = 40
 
 // Copy properties between objects
 State target = State.builder().build();
-PropertyPathUtils.copy(source, target, "position.x");               // Copies x coordinate
+DotPath.copy(source, target, "position.x");               // Copies x coordinate
 ```
 
 ### Map Support
@@ -71,11 +71,11 @@ map.put("level", 5);
 map.put("nested", new HashMap<>());
 
 // Get/set values in maps
-PropertyPathUtils.set(map, "level", 10);                           // map.level = 10
-PropertyPathUtils.set(map, "nested.value", "test");                // Creates nested structure
+DotPath.set(map, "level", 10);                            // map.level = 10
+DotPath.set(map, "nested.value", "test");                 // Creates nested structure
 
-Integer level = PropertyPathUtils.get(map, "level");               // 10
-String value = PropertyPathUtils.get(map, "nested.value");         // "test"
+Integer level = DotPath.get(map, "level");                // 10
+String value = DotPath.get(map, "nested.value");          // "test"
 ```
 
 ## Development
@@ -85,8 +85,8 @@ String value = PropertyPathUtils.get(map, "nested.value");         // "test"
 ```
 com.rmkane.dotpath
 ├── api                          # Public API classes
-│   ├── DotPathException.java      # Custom exceptions
-│   └── PropertyPathUtils.java     # Main entry point
+│   ├── DotPath.java               # API logic
+│   └── DotPathException.java      # Exception
 └── internal                     # Internal implementation
     ├── operations/                # Property and map operations
     └── traversal/                 # Path traversal logic
