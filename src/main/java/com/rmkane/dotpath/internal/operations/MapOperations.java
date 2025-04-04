@@ -16,7 +16,6 @@ public class MapOperations {
      * @return The value associated with the key
      * @throws DotPathException if the key is missing
      */
-    @SuppressWarnings("unchecked")
     public <T> T getValue(Map<String, Object> map, String key) throws DotPathException {
         return getValueOrThrow(map, key, () -> new DotPathException("Key not found in map: " + key));
     }
@@ -30,7 +29,6 @@ public class MapOperations {
      * @return The value from the map or the default value
      * @throws DotPathException if the object is not a Map
      */
-    @SuppressWarnings("unchecked")
     public <T> T getValueOrDefault(Object mapObj, String key, T defaultValue) throws DotPathException {
         Map<String, Object> map = asMap(mapObj);
         return getValueOrDefault(map, key, defaultValue);
