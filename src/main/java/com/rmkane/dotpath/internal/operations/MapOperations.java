@@ -2,7 +2,7 @@ package com.rmkane.dotpath.internal.operations;
 
 import java.util.Map;
 
-import com.rmkane.dotpath.api.ReflectionException;
+import com.rmkane.dotpath.api.DotPathException;
 
 /** Handles operations specific to Map objects. */
 public class MapOperations {
@@ -12,13 +12,13 @@ public class MapOperations {
      * @param map The map to get the value from
      * @param key The key to get
      * @return The value at the specified key
-     * @throws ReflectionException if the key is missing
+     * @throws DotPathException if the key is missing
      */
     @SuppressWarnings("unchecked")
-    public <T> T getValue(Map<String, Object> map, String key) throws ReflectionException {
+    public <T> T getValue(Map<String, Object> map, String key) throws DotPathException {
         Object value = map.get(key);
         if (value == null && !map.containsKey(key)) {
-            throw new ReflectionException("Map key missing: " + key);
+            throw new DotPathException("Map key missing: " + key);
         }
         return (T) value;
     }
@@ -49,12 +49,12 @@ public class MapOperations {
      *
      * @param obj The object to cast
      * @return The object as a Map&lt;String, Object&gt;
-     * @throws ReflectionException if the object is not a Map
+     * @throws DotPathException if the object is not a Map
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> asMap(Object obj) throws ReflectionException {
+    public Map<String, Object> asMap(Object obj) throws DotPathException {
         if (!isMap(obj)) {
-            throw new ReflectionException("Object is not a Map");
+            throw new DotPathException("Object is not a Map");
         }
         return (Map<String, Object>) obj;
     }

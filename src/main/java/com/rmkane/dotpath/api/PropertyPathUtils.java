@@ -28,9 +28,9 @@ public final class PropertyPathUtils {
      * @param root The root object to traverse
      * @param path The dot-notation path to traverse
      * @return A context containing the final object and property name
-     * @throws ReflectionException if the path is invalid or inaccessible
+     * @throws DotPathException if the path is invalid or inaccessible
      */
-    private static PropertyContext traversePath(Object root, String path) throws ReflectionException {
+    private static PropertyContext traversePath(Object root, String path) throws DotPathException {
         validationUtils.validateInput(root, path);
 
         String[] parts = path.split("\\.");
@@ -55,10 +55,10 @@ public final class PropertyPathUtils {
      * @param root The root object to traverse
      * @param path The dot-notation path to the desired property
      * @return The value at the specified path
-     * @throws ReflectionException if the path is invalid or inaccessible
+     * @throws DotPathException if the path is invalid or inaccessible
      */
     @SuppressWarnings("unchecked")
-    public static <T> T get(Object root, String path) throws ReflectionException {
+    public static <T> T get(Object root, String path) throws DotPathException {
         PropertyContext context = traversePath(root, path);
         Object target = context.getTarget();
         String propertyName = context.getPropertyName();
@@ -70,7 +70,7 @@ public final class PropertyPathUtils {
         try {
             return (T) propertyOperations.getPropertyValue(target, propertyName);
         } catch (Exception e) {
-            throw new ReflectionException("Error getting value at path: " + path, e);
+            throw new DotPathException("Error getting value at path: " + path, e);
         }
     }
 
@@ -80,9 +80,9 @@ public final class PropertyPathUtils {
      * @param root  The root object to traverse
      * @param path  The dot-notation path to the desired property
      * @param value The value to set
-     * @throws ReflectionException if the path is invalid or inaccessible
+     * @throws DotPathException if the path is invalid or inaccessible
      */
-    public static <T> void set(Object root, String path, T value) throws ReflectionException {
+    public static <T> void set(Object root, String path, T value) throws DotPathException {
         PropertyContext context = traversePath(root, path);
         Object target = context.getTarget();
         String propertyName = context.getPropertyName();
@@ -94,7 +94,7 @@ public final class PropertyPathUtils {
                 propertyOperations.setValueOnObject(target, propertyName, value);
             }
         } catch (Exception e) {
-            throw new ReflectionException("Error setting value at path: " + path, e);
+            throw new DotPathException("Error setting value at path: " + path, e);
         }
     }
 
@@ -104,16 +104,16 @@ public final class PropertyPathUtils {
      * @param source Source object to copy from
      * @param target Target object to copy to
      * @param path   Property path to copy
-     * @throws ReflectionException if types are incompatible or property not found
+     * @throws DotPathException if types are incompatible or property not found
      */
-    public static void copy(Object source, Object target, String path) throws ReflectionException {
+    public static void copy(Object source, Object target, String path) throws DotPathException {
         if (source == null || target == null) {
-            throw new ReflectionException("Source and target objects cannot be null");
+            throw new DotPathException("Source and target objects cannot be null");
         }
 
         // First check if source and target are of compatible types
         if (!source.getClass().equals(target.getClass())) {
-            throw new ReflectionException(String.format(
+            throw new DotPathException(String.format(
                     "Source type %s and target type %s are incompatible",
                     source.getClass().getName(), target.getClass().getName()));
         }
@@ -123,14 +123,14 @@ public final class PropertyPathUtils {
             Class<?> targetType = typeResolver.resolveType(target, path);
 
             if (!typeResolver.isCompatibleType(sourceType, targetType)) {
-                throw new ReflectionException(String.format(
+                throw new DotPathException(String.format(
                         "Type mismatch: cannot copy from %s to %s", sourceType.getName(), targetType.getName()));
             }
 
             Object value = get(source, path);
             set(target, path, value);
         } catch (Exception e) {
-            throw new ReflectionException("Failed to copy property: " + e.getMessage(), e);
+            throw new DotPathException("Failed to copy property: " + e.getMessage(), e);
         }
     }
 
@@ -141,9 +141,9 @@ public final class PropertyPathUtils {
      * @param root     The root object to traverse
      * @param path     The dot-notation path to the desired property
      * @param valueStr The string value to convert and set
-     * @throws ReflectionException if the path is invalid or inaccessible
+     * @throws DotPathException if the path is invalid or inaccessible
      */
-    public static void setFromString(Object root, String path, String valueStr) throws ReflectionException {
+    public static void setFromString(Object root, String path, String valueStr) throws DotPathException {
         validationUtils.validateInput(root, "root");
         validationUtils.validateInput(path, "path");
         validationUtils.validateInput(valueStr, "valueStr");
@@ -153,7 +153,7 @@ public final class PropertyPathUtils {
             Object value = typeResolver.parseValueByType(targetType, valueStr);
             set(root, path, value);
         } catch (Exception e) {
-            throw new ReflectionException("Error setting value from string at path: " + path, e);
+            throw new DotPathException("Error setting value from string at path: " + path, e);
         }
     }
 }

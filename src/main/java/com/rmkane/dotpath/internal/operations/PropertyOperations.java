@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import com.rmkane.dotpath.api.ReflectionException;
+import com.rmkane.dotpath.api.DotPathException;
 
 /** Handles operations specific to object properties. */
 public class PropertyOperations {
@@ -44,7 +44,7 @@ public class PropertyOperations {
 
         // Check if the value's type is compatible with the field type
         if (!isCompatibleType(value.getClass(), fieldType)) {
-            throw new ReflectionException(String.format(
+            throw new DotPathException(String.format(
                     "Type mismatch: value type %s is not compatible with field type %s",
                     value.getClass().getName(), fieldType.getName()));
         }

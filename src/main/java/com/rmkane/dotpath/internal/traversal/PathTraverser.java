@@ -2,7 +2,7 @@ package com.rmkane.dotpath.internal.traversal;
 
 import java.util.HashMap;
 
-import com.rmkane.dotpath.api.ReflectionException;
+import com.rmkane.dotpath.api.DotPathException;
 import com.rmkane.dotpath.internal.operations.MapOperations;
 import com.rmkane.dotpath.internal.operations.PropertyOperations;
 
@@ -18,9 +18,9 @@ public class PathTraverser {
      *
      * @param context The property context containing target object and property name
      * @return The value at the specified path
-     * @throws ReflectionException if the path is invalid or inaccessible
+     * @throws DotPathException if the path is invalid or inaccessible
      */
-    public Object traversePath(PropertyContext context) throws ReflectionException {
+    public Object traversePath(PropertyContext context) throws DotPathException {
         validateContext(context);
 
         if (mapOperations.isMap(context.getTarget())) {
@@ -36,9 +36,9 @@ public class PathTraverser {
      *
      * @param context The property context containing target object and property name
      * @return The value at the specified path, creating new objects as needed
-     * @throws ReflectionException if the path is invalid or inaccessible
+     * @throws DotPathException if the path is invalid or inaccessible
      */
-    public Object traversePathAndCreateIfNeeded(PropertyContext context) throws ReflectionException {
+    public Object traversePathAndCreateIfNeeded(PropertyContext context) throws DotPathException {
         validateContext(context);
 
         if (mapOperations.isMap(context.getTarget())) {
@@ -50,21 +50,21 @@ public class PathTraverser {
         return getOrCreatePropertyValue(context);
     }
 
-    private void validateContext(PropertyContext context) throws ReflectionException {
+    private void validateContext(PropertyContext context) throws DotPathException {
         if (context.getTarget() == null) {
-            throw new ReflectionException("Null while traversing: " + context.getPropertyName());
+            throw new DotPathException("Null while traversing: " + context.getPropertyName());
         }
     }
 
-    private Object getPropertyValue(PropertyContext context) throws ReflectionException {
+    private Object getPropertyValue(PropertyContext context) throws DotPathException {
         try {
             return propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
         } catch (Exception e) {
-            throw new ReflectionException("Error traversing path segment: " + context.getPropertyName(), e);
+            throw new DotPathException("Error traversing path segment: " + context.getPropertyName(), e);
         }
     }
 
-    private Object getOrCreatePropertyValue(PropertyContext context) throws ReflectionException {
+    private Object getOrCreatePropertyValue(PropertyContext context) throws DotPathException {
         try {
             Object value = propertyOperations.getPropertyValue(context.getTarget(), context.getPropertyName());
             if (value != null) {
@@ -72,7 +72,7 @@ public class PathTraverser {
             }
             return propertyOperations.createAndSetIntermediateObject(context.getTarget(), context.getPropertyName());
         } catch (Exception e) {
-            throw new ReflectionException("Error traversing path segment: " + context.getPropertyName(), e);
+            throw new DotPathException("Error traversing path segment: " + context.getPropertyName(), e);
         }
     }
 }

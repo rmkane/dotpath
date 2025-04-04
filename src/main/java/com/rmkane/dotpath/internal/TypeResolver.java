@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.rmkane.dotpath.api.ReflectionException;
+import com.rmkane.dotpath.api.DotPathException;
 import com.rmkane.dotpath.internal.operations.PropertyOperations;
 
 /** Handles type resolution and conversion. */
@@ -67,7 +67,7 @@ public class TypeResolver {
                 field.setAccessible(true);
                 return field.getType();
             } catch (NoSuchFieldException e2) {
-                throw new ReflectionException(
+                throw new DotPathException(
                         String.format("Property '%s' not found in class %s", part, currentClass.getName()));
             }
         }

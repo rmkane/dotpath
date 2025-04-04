@@ -41,8 +41,8 @@ State state = State.builder()
         .build();
 
 // Get values using dot notation
-Integer count = PropertyPathUtils.get(state, "count");                // 42
-Integer x = PropertyPathUtils.get(state, "position.x");              // 10
+Integer count = PropertyPathUtils.get(state, "count");              // 42
+Integer x = PropertyPathUtils.get(state, "position.x");             // 10
 
 // Set values using dot notation
 PropertyPathUtils.set(state, "count", 100);                         // state.count = 100
@@ -84,12 +84,12 @@ String value = PropertyPathUtils.get(map, "nested.value");         // "test"
 
 ```
 com.rmkane.dotpath
-├── api                 # Public API classes
-│   ├── PropertyPathUtils.java      # Main entry point
-│   └── ReflectionException.java    # Custom exceptions
-└── internal           # Internal implementation
-    ├── operations/    # Property and map operations
-    └── traversal/     # Path traversal logic
+├── api                          # Public API classes
+│   ├── DotPathException.java      # Custom exceptions
+│   └── PropertyPathUtils.java     # Main entry point
+└── internal                     # Internal implementation
+    ├── operations/                # Property and map operations
+    └── traversal/                 # Path traversal logic
 ```
 
 ### Building and Testing

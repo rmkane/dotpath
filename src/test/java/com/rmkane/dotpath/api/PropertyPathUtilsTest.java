@@ -156,7 +156,7 @@ class PropertyPathUtilsTest {
         String incompatibleTarget = "This is a String, not a State";
 
         // Try to copy from State to String
-        ReflectionException exception = assertThrows(ReflectionException.class, () -> {
+        DotPathException exception = assertThrows(DotPathException.class, () -> {
             PropertyPathUtils.copy(source, incompatibleTarget, "count");
         });
         assertTrue(
@@ -166,7 +166,7 @@ class PropertyPathUtilsTest {
                                 "Source type com.rmkane.dotpath.model.State and target type java.lang.String are incompatible"));
 
         // Try to copy from String to State
-        exception = assertThrows(ReflectionException.class, () -> {
+        exception = assertThrows(DotPathException.class, () -> {
             PropertyPathUtils.copy(incompatibleTarget, source, "player");
         });
         assertTrue(
